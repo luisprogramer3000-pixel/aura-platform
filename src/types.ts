@@ -137,6 +137,9 @@ export interface GraphicElement extends BaseElement {
   content?: string;
   color?: string;
   fontSize?: number;
+  align?: 'left' | 'center' | 'right';
+  bold?: boolean;
+  italic?: boolean;
 }
 
 export interface ShapeElement extends BaseElement {
@@ -145,6 +148,9 @@ export interface ShapeElement extends BaseElement {
   content?: string;
   color?: string;
   fontSize?: number;
+  align?: 'left' | 'center' | 'right';
+  bold?: boolean;
+  italic?: boolean;
 }
 
 export interface ScatterCardsElement extends BaseElement {
