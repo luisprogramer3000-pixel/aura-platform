@@ -163,6 +163,44 @@ export interface ImageGridElement extends BaseElement {
   images: Array<{ src: string; alt: string; caption: string }>;
 }
 
+export interface WordSearchElement extends BaseElement {
+  type: 'wordsearch';
+  words: string[];
+  gridSize?: number;
+}
+
+export interface FillBlanksElement extends BaseElement {
+  type: 'fillblanks';
+  textWithBlanks: string;
+  answers: string[];
+}
+
+export interface TrueFalseElement extends BaseElement {
+  type: 'truefalse';
+  statement: string;
+  isTrue: boolean;
+  explanation: string;
+}
+
+export interface RiddleElement extends BaseElement {
+  type: 'riddle';
+  riddle: string;
+  answer: string;
+  imageHint?: string;
+}
+
+export interface TongueTwisterElement extends BaseElement {
+  type: 'tonguetwister';
+  twister: string;
+  level: 'easy' | 'medium' | 'hard';
+}
+
+export interface MultipleChoiceElement extends BaseElement {
+  type: 'multiplechoice';
+  question: string;
+  options: Array<{ text: string; image?: string; isCorrect: boolean }>;
+}
+
 export type SlideElement =
   | TitleElement
   | TextElement
@@ -179,7 +217,13 @@ export type SlideElement =
   | GraphicElement
   | ShapeElement
   | ScatterCardsElement
-  | ImageGridElement;
+  | ImageGridElement
+  | WordSearchElement
+  | FillBlanksElement
+  | TrueFalseElement
+  | RiddleElement
+  | TongueTwisterElement
+  | MultipleChoiceElement;
 
 export interface Slide {
   id: string;

@@ -164,6 +164,152 @@ const InteractiveMatch = ({ pairs }: { pairs: {left: string, right: string}[] })
   );
 };
 
+const InteractiveWordSearch = ({ words, gridSize = 10 }: { words: string[], gridSize?: number }) => {
+  const [grid, setGrid] = useState<string[][]>([]);
+  const [selectedCells, setSelectedCells] = useState<{r:number, c:number}[]>([]);
+  const [foundWords, setFoundWords] = useState<string[]>([]);
+  
+  // Basic mock grid generation for demo
+  useEffect(() => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const newGrid = Array(gridSize).fill(null).map(() => 
+      Array(gridSize).fill(null).map(() => letters[Math.floor(Math.random() * letters.length)])
+    );
+    // Hardcode words into first few rows just for demo
+    words.forEach((w, i) => {
+      if(i < gridSize) {
+        for(let j=0; j<w.length && j<gridSize; j++) {
+          newGrid[i][j] = w[j].toUpperCase();
+        }
+      }
+    });
+    setGrid(newGrid);
+  }, [words, gridSize]);
+
+  const toggleCell = (r: number, c: number, e: any) => {
+    e.stopPropagation();
+    const isSelected = selectedCells.find(cell => cell.r === r && cell.c === c);
+    if (isSelected) {
+      setSelectedCells(selectedCells.filter(cell => !(cell.r === r && cell.c === c)));
+    } else {
+      setSelectedCells([...selectedCells, {r, c}]);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border-2 border-indigo-200 p-8 flex gap-8 pointer-events-auto">
+      <div className="flex flex-col gap-1">
+        {grid.map((row, r) => (
+          <div key={r} className="flex gap-1">
+            {row.map((letter, c) => {
+              const isSelected = selectedCells.find(cell => cell.r === r && cell.c === c);
+              return (
+                <div 
+                  key={c} 
+                  onClick={(e) => toggleCell(r, c, e)}
+                  className={`w-10 h-10 flex items-center justify-center font-bold text-lg rounded cursor-pointer transition-colors select-none ${isSelected ? 'bg-indigo-500 text-white shadow-inner' : 'bg-gray-50 hover:bg-indigo-100 text-gray-700'}`}
+                >
+                  {letter}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-col gap-4 min-w-[200px]">
+        <h3 className="font-bold text-xl text-indigo-900 border-b-2 border-indigo-100 pb-2">Palabras a buscar:</h3>
+        <ul className="flex flex-col gap-2">
+          {words.map((w, i) => (
+            <li key={i} className={`font-medium text-lg px-3 py-2 rounded-lg ${foundWords.includes(w) ? 'line-through text-gray-400 bg-gray-100' : 'text-indigo-700 bg-indigo-50'}`}>
+              {w}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+const InteractiveFillBlanks = ({ textWithBlanks, answers }: { textWithBlanks: string, answers: string[] }) => {
+  const parts = textWithBlanks.split('___');
+  const [inputs, setInputs] = useState<string[]>(Array(parts.length - 1).fill(''));
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 pointer-events-auto text-xl leading-loose text-gray-800">
+      {parts.map((part, i) => (
+        <React.Fragment key={i}>
+          <span>{part}</span>
+          {i < parts.length - 1 && (
+            <input 
+              type="text" 
+              value={inputs[i]}
+              onChange={(e) => {
+                const newInputs = [...inputs];
+                newInputs[i] = e.target.value;
+                setInputs(newInputs);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className={`mx-2 border-b-2 outline-none text-center bg-gray-50 rounded-t px-2 focus:bg-indigo-50 transition-colors w-32 ${inputs[i].toLowerCase().trim() === answers[i]?.toLowerCase().trim() ? 'border-green-500 text-green-700 font-bold' : 'border-indigo-400 text-indigo-900'}`}
+            />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+const InteractiveTrueFalse = ({ statement, isTrue, explanation }: { statement: string, isTrue: boolean, explanation: string }) => {
+  const [selected, setSelected] = useState<boolean | null>(null);
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 flex flex-col gap-6 pointer-events-auto w-[600px] text-center">
+      <h3 className="text-2xl font-bold text-gray-800">{statement}</h3>
+      <div className="flex justify-center gap-8">
+        <button 
+          onClick={(e) => { e.stopPropagation(); setSelected(true); }}
+          className={`px-8 py-4 rounded-lg font-bold text-xl transition-colors ${selected === true ? (isTrue ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+        >
+          Verdadero
+        </button>
+        <button 
+          onClick={(e) => { e.stopPropagation(); setSelected(false); }}
+          className={`px-8 py-4 rounded-lg font-bold text-xl transition-colors ${selected === false ? (!isTrue ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+        >
+          Falso
+        </button>
+      </div>
+      {selected !== null && (
+        <div className={`p-4 rounded-lg ${selected === isTrue ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+          <p className="font-bold">{selected === isTrue ? '¡Correcto!' : 'Incorrecto.'}</p>
+          <p className="mt-2 text-sm">{explanation}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const InteractiveMultipleChoice = ({ question, options }: { question: string, options: any[] }) => {
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 flex flex-col gap-6 pointer-events-auto w-[700px]">
+      <h3 className="text-2xl font-bold text-indigo-900 mb-4">{question}</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {options.map((opt, i) => (
+          <div 
+            key={i} 
+            onClick={(e) => { e.stopPropagation(); setSelectedIdx(i); }}
+            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 ${selectedIdx === i ? (opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50'}`}
+          >
+            {opt.image && <img src={opt.image} alt="option" className="w-16 h-16 object-cover rounded-lg" />}
+            <span className={`text-lg font-medium ${selectedIdx === i ? (opt.isCorrect ? 'text-green-800' : 'text-red-800') : 'text-gray-700'}`}>{opt.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function Editor() {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
@@ -788,6 +934,92 @@ export default function Editor() {
                    </div>
                 )
              })}
+          </div>
+        );
+      case 'wordsearch':
+        if (isPlaying && (el as any).words) return <InteractiveWordSearch words={(el as any).words} gridSize={(el as any).gridSize} />;
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-xl p-8">
+             <h3 className="text-2xl font-bold text-indigo-900 mb-4">Sopa de Letras</h3>
+             <div className="flex gap-4 flex-wrap justify-center">
+               {(el as any).words?.map((w: string, i: number) => <span key={i} className="px-3 py-1 bg-white rounded shadow text-indigo-700 font-bold">{w}</span>)}
+             </div>
+          </div>
+        );
+      case 'fillblanks':
+        if (isPlaying && (el as any).textWithBlanks) return <InteractiveFillBlanks textWithBlanks={(el as any).textWithBlanks} answers={(el as any).answers} />;
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-blue-50 border-2 border-dashed border-blue-300 rounded-xl p-8">
+             <h3 className="text-2xl font-bold text-blue-900 mb-4">Completar Espacios</h3>
+             <p className="text-xl text-center leading-relaxed">{(el as any).textWithBlanks}</p>
+          </div>
+        );
+      case 'truefalse':
+        if (isPlaying && (el as any).statement) return <InteractiveTrueFalse statement={(el as any).statement} isTrue={(el as any).isTrue} explanation={(el as any).explanation} />;
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-green-50 border-2 border-dashed border-green-300 rounded-xl p-8 text-center">
+             <h3 className="text-2xl font-bold text-green-900 mb-4">Verdadero o Falso</h3>
+             <p className="text-2xl">{(el as any).statement}</p>
+          </div>
+        );
+      case 'multiplechoice':
+        if (isPlaying && (el as any).question) return <InteractiveMultipleChoice question={(el as any).question} options={(el as any).options} />;
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-purple-50 border-2 border-dashed border-purple-300 rounded-xl p-8 text-center">
+             <h3 className="text-2xl font-bold text-purple-900 mb-4">Opción Múltiple</h3>
+             <p className="text-2xl">{(el as any).question}</p>
+          </div>
+        );
+      case 'riddle':
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-yellow-50 border-4 border-yellow-400 rounded-xl p-8 text-center shadow-lg relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-4 opacity-10"><Sparkles size={100} /></div>
+             <h3 className="text-4xl font-black text-yellow-600 mb-6 uppercase tracking-wider">Adivinanza</h3>
+             <p className="text-3xl font-serif italic text-yellow-900 mb-8 max-w-2xl leading-relaxed">"{(el as any).riddle}"</p>
+             {isPlaying ? (
+               <div className="text-xl font-bold text-transparent hover:text-yellow-800 transition-colors bg-yellow-200 px-6 py-3 rounded-full cursor-help">
+                 Pasa el cursor para ver la respuesta: {(el as any).answer}
+               </div>
+             ) : (
+               <div className="text-xl font-bold text-yellow-800 bg-yellow-200 px-6 py-3 rounded-full">
+                 Respuesta: {(el as any).answer}
+               </div>
+             )}
+          </div>
+        );
+      case 'tonguetwister':
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-pink-50 border-4 border-pink-400 rounded-xl p-8 text-center shadow-lg">
+             <h3 className="text-4xl font-black text-pink-600 mb-6 uppercase tracking-wider">Trabalenguas</h3>
+             <p className="text-4xl font-bold text-pink-900 leading-tight max-w-3xl">{(el as any).twister}</p>
+          </div>
+        );
+      case 'reading':
+        return (
+          <div className="flex w-full h-full bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+             <div className="flex-1 p-10 overflow-y-auto">
+               <h3 className="text-3xl font-bold text-gray-900 mb-6">{(el as any).title}</h3>
+               <p className="text-xl text-gray-700 leading-relaxed font-serif whitespace-pre-wrap">{(el as any).text}</p>
+             </div>
+             {(el as any).image && (
+               <div className="w-1/3 bg-gray-100 flex-shrink-0">
+                 <img src={(el as any).image} alt="Reading related" className="w-full h-full object-cover" />
+               </div>
+             )}
+          </div>
+        );
+      case 'audio':
+        return (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-indigo-900 rounded-xl shadow-lg border border-indigo-800 p-8 text-white relative overflow-hidden">
+             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #818cf8 0%, transparent 50%)' }}></div>
+             <div className="w-24 h-24 bg-indigo-500 rounded-full flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(99,102,241,0.5)] z-10 cursor-pointer hover:scale-105 transition-transform">
+               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+             </div>
+             <div className="w-full max-w-2xl bg-indigo-800/50 h-2 rounded-full mb-4 z-10">
+               <div className="w-1/3 h-full bg-indigo-400 rounded-full"></div>
+             </div>
+             <h3 className="text-2xl font-medium text-indigo-200 z-10">Pista de Audio Simulada</h3>
+             <p className="mt-6 text-lg italic text-indigo-300 text-center max-w-2xl z-10">"{(el as any).transcript}"</p>
           </div>
         );
       case 'shape':

@@ -420,9 +420,18 @@ export async function generateAILesson(
           });
        } else {
           // PROCEDURAL BODY SLIDES
-          const layoutType = i % 6; // Cycle through 6 layouts
-          switch (layoutType) {
-             case 1: // THEORY SPLIT (Text + Image)
+          const baseSequence = [
+             'theory', 'vocab', 'grammar', 'dialogue', 'scattercards', 'dragdrop'
+          ];
+          const extendedSequence = [
+             'theory', 'reading', 'audio', 'vocab', 'grammar', 'wordsearch', 'fillblanks', 'dialogue', 'truefalse', 'scattercards', 'dragdrop', 'riddle', 'tonguetwister', 'multiplechoice'
+          ];
+          
+          const sequenceToUse = slideCount >= 10 ? extendedSequence : baseSequence;
+          const layoutName = sequenceToUse[(i - 1) % sequenceToUse.length];
+
+          switch (layoutName) {
+             case 'theory':
                 fallbackSlides.push({
                    id: slideId, type: 'theory', background: bgLight, transition: 'slide',
                    elements: [
@@ -432,7 +441,71 @@ export async function generateAILesson(
                    ]
                 });
                 break;
-             case 2: // GRAMMAR BOX
+             case 'reading':
+                fallbackSlides.push({
+                   id: slideId, type: 'reading', background: '#fff', transition: 'fade',
+                   elements: [
+                      { id: `el-${i}-rd`, type: 'reading', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, title: `Lectura sobre ${safeTopic}`, text: `Había una vez un pequeño pueblo donde todos querían aprender sobre ${safeTopic}. La maestra explicó que los verbos como "${verbs[0]}" y "${verbs[1]}" son muy importantes para la comunicación diaria.\n\nLos estudiantes escucharon atentamente y practicaron en casa.`, question: '¿De qué trata la lectura?', options: ['De un pueblo', 'De la maestra', safeTopic], correctIndex: 2, backgroundColor: '#ffffff', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'audio':
+                fallbackSlides.push({
+                   id: slideId, type: 'audio', background: '#312e81', transition: 'zoom',
+                   elements: [
+                      { id: `el-${i}-au`, type: 'audio', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, speaker: 'female', transcript: `¡Hola! Hoy vamos a practicar la pronunciación de ${safeTopic}. Escucha con atención y repite después de mí.`, dialogueLines: [], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'wordsearch':
+                fallbackSlides.push({
+                   id: slideId, type: 'wordsearch', background: '#eef2ff', transition: 'scale',
+                   elements: [
+                      { id: `el-${i}-ws`, type: 'wordsearch', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, words: [verbs[0].toUpperCase(), verbs[1].toUpperCase(), 'REGLA', 'EJEMPLO', 'TEMA'], gridSize: 10, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'fillblanks':
+                fallbackSlides.push({
+                   id: slideId, type: 'fillblanks', background: '#eff6ff', transition: 'slide',
+                   elements: [
+                      { id: `el-${i}-fb`, type: 'fillblanks', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, textWithBlanks: `Para aplicar ${safeTopic}, primero debes ___ el verbo y luego añadir el ___. ¡Es muy fácil!`, answers: ['conjugar', 'sufijo'], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'truefalse':
+                fallbackSlides.push({
+                   id: slideId, type: 'truefalse', background: '#f0fdf4', transition: 'fade',
+                   elements: [
+                      { id: `el-${i}-tf`, type: 'truefalse', left: 212, top: 80, width: 600, height: 400, zIndex: 3, statement: `El verbo "${verbs[i%verbs.length]}" siempre sigue la regla general de ${safeTopic}.`, isTrue: i % 2 === 0, explanation: `En realidad, esto depende del contexto, pero para este ejercicio asumiremos que es ${i % 2 === 0 ? 'Verdadero' : 'Falso'}.`, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'riddle':
+                fallbackSlides.push({
+                   id: slideId, type: 'riddle', background: '#fefce8', transition: 'zoom',
+                   elements: [
+                      { id: `el-${i}-rid`, type: 'riddle', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, riddle: `Soy una palabra que usas al hablar de ${safeTopic}. Tengo ${verbs[0].length} letras y empiezo con ${verbs[0][0].toUpperCase()}. ¿Quién soy?`, answer: verbs[0], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'tonguetwister':
+                fallbackSlides.push({
+                   id: slideId, type: 'tonguetwister', background: '#fdf2f8', transition: 'slide',
+                   elements: [
+                      { id: `el-${i}-tt`, type: 'tonguetwister', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, twister: `Tres tristes tigres tragaban trigo al estudiar ${safeTopic} en un trigal.`, level: 'hard', backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'multiplechoice':
+                fallbackSlides.push({
+                   id: slideId, type: 'multiplechoice', background: '#faf5ff', transition: 'fade',
+                   elements: [
+                      { id: `el-${i}-mc`, type: 'multiplechoice', left: 162, top: 80, width: 700, height: 400, zIndex: 3, question: `¿Cuál de estos es un ejemplo correcto de ${safeTopic}?`, options: [{text: verbs[0], isCorrect: true}, {text: 'Opción incorrecta', isCorrect: false}, {text: 'Nada que ver', isCorrect: false}, {text: verbs[1], isCorrect: false}], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                   ]
+                });
+                break;
+             case 'grammar': // GRAMMAR BOX
                 fallbackSlides.push({
                    id: slideId, type: 'grammar', background: '#eff6ff', transition: 'fade',
                    elements: [
@@ -447,7 +520,7 @@ export async function generateAILesson(
                    ]
                 });
                 break;
-             case 3: // INTERACTIVE MATCH
+             case 'dragdrop': // INTERACTIVE MATCH
                 fallbackSlides.push({
                    id: slideId, type: 'dragdrop', background: '#fef2f2', transition: 'zoom',
                    elements: [
@@ -464,7 +537,7 @@ export async function generateAILesson(
                    ]
                 });
                 break;
-             case 4: // DIALOGUE
+             case 'dialogue': // DIALOGUE
                 fallbackSlides.push({
                    id: slideId, type: 'dialogue', background: '#f8fafc', transition: 'slide',
                    elements: [
@@ -482,7 +555,7 @@ export async function generateAILesson(
                    ]
                 });
                 break;
-             case 5: // SCATTER CARDS
+             case 'scattercards': // SCATTER CARDS
                 fallbackSlides.push({
                    id: slideId, type: 'interact', background: '#fffbeb', transition: 'zoom',
                    elements: [
@@ -498,7 +571,7 @@ export async function generateAILesson(
                    ]
                 });
                 break;
-             case 0: // VOCABULARY GRID
+             case 'vocab': // VOCABULARY GRID
                 fallbackSlides.push({
                    id: slideId, type: 'vocab', background: bgLight, transition: 'slide',
                    elements: [
