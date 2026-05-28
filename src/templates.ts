@@ -367,9 +367,9 @@ export async function generateAILesson(
     // -------------------------------------------------------------------------------------
     
     // MODEL CLASS FALLBACK: Español B1 - El Pretérito Perfecto
-    const safeTopic = "El Pretérito Perfecto (Experiencias Pasadas)";
-    const safeSubject = "Español";
-    const safeLevel = "B1";
+    const safeTopic = topic || "El Pretérito Perfecto (Experiencias Pasadas)";
+    const safeSubject = subject || "Español";
+    const safeLevel = level || "B1";
     
     // Paleta Editorial "Oxford Modern"
     const bgDark = '#0f172a'; // Slate 900
@@ -388,8 +388,8 @@ export async function generateAILesson(
       elements: [
         { id: `el-${uniqueId}-c-badge`, type: 'text', left: 80, top: 80, width: 200, height: 40, zIndex: 2, content: `NIVEL ${safeLevel}`, fontSize: 16, color: '#ffffff', backgroundColor: primary, borderRadius: 20, padding: 10, align: 'center', bold: true, italic: false },
         { id: `el-${uniqueId}-c-subject`, type: 'text', left: 80, top: 140, width: 800, height: 30, zIndex: 2, content: `CLASE DE ${safeSubject.toUpperCase()}`, fontSize: 18, color: accent, align: 'left', bold: true, italic: false, textShadow: 'none' },
-        { id: `el-${uniqueId}-c-title`, type: 'title', left: 80, top: 180, width: 800, height: 160, zIndex: 2, content: 'El Pretérito Perfecto', fontSize: 64, color: '#ffffff', align: 'left', bold: true, italic: false },
-        { id: `el-${uniqueId}-c-sub`, type: 'text', left: 80, top: 340, width: 600, height: 80, zIndex: 2, content: 'Hablar de experiencias pasadas y acciones recientes que tienen conexión con el presente.', fontSize: 24, color: '#94a3b8', align: 'left', bold: false, italic: false },
+        { id: `el-${uniqueId}-c-title`, type: 'title', left: 80, top: 180, width: 800, height: 160, zIndex: 2, content: safeTopic, fontSize: 64, color: '#ffffff', align: 'left', bold: true, italic: false },
+        { id: `el-${uniqueId}-c-sub`, type: 'text', left: 80, top: 340, width: 600, height: 80, zIndex: 2, content: `Aprenderemos sobre ${safeTopic} de forma interactiva y dinámica.`, fontSize: 24, color: '#94a3b8', align: 'left', bold: false, italic: false },
         // Decorative shapes (Constructor Interactivo)
         { id: `el-${uniqueId}-c-circle`, type: 'graphic', left: 750, top: 100, width: 200, height: 200, zIndex: 1, shapeType: 'circle', backgroundColor: 'transparent', borderColor: 'rgba(79, 70, 229, 0.5)' },
         { id: `el-${uniqueId}-c-star`, type: 'graphic', left: 850, top: 250, width: 100, height: 100, zIndex: 1, shapeType: 'star', backgroundColor: accent, borderColor: 'transparent' }
@@ -407,10 +407,10 @@ export async function generateAILesson(
         { id: `el-${uniqueId}-g-line`, type: 'text', left: 60, top: 110, width: 800, height: 2, zIndex: 1, content: '', backgroundColor: '#e2e8f0', fontSize: 10, color: 'transparent', align: 'left', bold: false, italic: false },
         
         { id: `el-${uniqueId}-g-card1`, type: 'grammar', left: 60, top: 150, width: 440, height: 350, zIndex: 3, 
-          ruleTitle: 'Verbo Auxiliar HABER',
-          explanation: 'Se usa el presente de indicativo del verbo haber.',
-          formula: 'He, Has, Ha,\nHemos, Habéis, Han',
-          example: 'Nosotros hemos...',
+          ruleTitle: `Regla principal para: ${safeTopic}`,
+          explanation: `Aquí aprenderemos la regla fundamental sobre ${safeTopic}.`,
+          formula: 'Elemento A + Elemento B = Resultado',
+          example: 'Ejemplo generado por IA simulada...',
           backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 2, borderColor: primary, padding: 24 
         },
         { id: `el-${uniqueId}-g-card2`, type: 'grammar', left: 520, top: 150, width: 440, height: 350, zIndex: 3, 
@@ -431,8 +431,8 @@ export async function generateAILesson(
       background: '#f0f9ff',
       transition: 'zoom',
       elements: [
-        { id: `el-${uniqueId}-sc-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: '¡Cuidado con los Irregulares!', fontSize: 36, color: '#0369a1', align: 'center', bold: true, italic: false },
-        { id: `el-${uniqueId}-sc-desc`, type: 'text', left: 60, top: 110, width: 800, height: 40, zIndex: 2, content: 'Repasa con tus estudiantes. Cada tarjeta muestra un verbo infinitivo.', fontSize: 20, color: '#0284c7', align: 'center', bold: false, italic: false },
+        { id: `el-${uniqueId}-sc-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Casos especiales de ${safeTopic}`, fontSize: 36, color: '#0369a1', align: 'center', bold: true, italic: false },
+        { id: `el-${uniqueId}-sc-desc`, type: 'text', left: 60, top: 110, width: 800, height: 40, zIndex: 2, content: `Haz clic en las tarjetas para explorar ejemplos de ${safeTopic}`, fontSize: 20, color: '#0284c7', align: 'center', bold: false, italic: false },
         
         { id: `el-${uniqueId}-sc-cards`, type: 'scattercards', left: 200, top: 180, width: 600, height: 300, zIndex: 3, 
           cards: [
@@ -474,9 +474,9 @@ export async function generateAILesson(
       background: bgDark,
       transition: 'scale',
       elements: [
-        { id: `el-${uniqueId}-qz-title`, type: 'title', left: 60, top: 60, width: 800, height: 60, zIndex: 2, content: 'Misión Final: Evaluación', fontSize: 40, color: accent, align: 'center', bold: true, italic: false },
+        { id: `el-${uniqueId}-qz-title`, type: 'title', left: 60, top: 60, width: 800, height: 60, zIndex: 2, content: `Misión Final: Evaluación de ${safeTopic}`, fontSize: 40, color: accent, align: 'center', bold: true, italic: false },
         { id: `el-${uniqueId}-qz-quiz`, type: 'quiz', left: 160, top: 160, width: 700, height: 350, zIndex: 3, 
-          question: 'Completa la frase correctamente:\n"Esta mañana, Pedro y yo _______ _______ el desayuno a las 8:00."',
+          question: `Pregunta de evaluación sobre: ${safeTopic}`,
           options: [
             'hemos hecho',
             'han hecho',
@@ -487,6 +487,20 @@ export async function generateAILesson(
         }
       ]
     });
+
+    // Adjust array size based on slideCount
+    if (slideCount < fallbackSlides.length) {
+       fallbackSlides.splice(slideCount);
+    } else {
+       let currentIndex = 1; // start from the grammar slide to copy
+       while (fallbackSlides.length < slideCount) {
+         const slideToCopy = fallbackSlides[currentIndex];
+         const newSlide = JSON.parse(JSON.stringify(slideToCopy));
+         newSlide.id = `slide-${uniqueId}-extra-${fallbackSlides.length}`;
+         fallbackSlides.push(newSlide);
+         currentIndex = currentIndex === 1 ? 2 : 1; // alternate
+       }
+    }
 
     return fallbackSlides;
 }
