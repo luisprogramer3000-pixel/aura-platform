@@ -169,7 +169,7 @@ export default function Editor() {
     const updatedSlides = [...slides];
     updatedSlides[activeSlideIndex].elements.push(newElement as SlideElement);
     setSlides(updatedSlides);
-    setSelectedElementId(newElement.id);
+    setSelectedElementId(newElement.id as string);
   };
 
   const handleFileUpload = (type: 'image' | 'video' | 'audio') => {
