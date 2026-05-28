@@ -13,6 +13,10 @@ from ai_engine.agents.orchestrator_agent import OrchestratorAgent
 
 app = FastAPI(title="Aura AI Educational Engine", version="1.0.0")
 
+@app.get("/")
+async def root():
+    return {"status": "success", "message": "Aura AI Backend is running perfectly!"}
+
 # CORS Configuration for Production
 app.add_middleware(
     CORSMiddleware,
