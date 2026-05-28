@@ -136,6 +136,7 @@ export interface GraphicElement extends BaseElement {
   shapeType: string;
   content?: string;
   color?: string;
+  fontSize?: number;
 }
 
 export interface ShapeElement extends BaseElement {
@@ -143,6 +144,7 @@ export interface ShapeElement extends BaseElement {
   shapeType: string;
   content?: string;
   color?: string;
+  fontSize?: number;
 }
 
 export interface ScatterCardsElement extends BaseElement {
