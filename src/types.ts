@@ -14,7 +14,13 @@ export type BlockType =
   | 'scattercards'
   | 'graphic'
   | 'shape'
-  | 'imagegrid';
+  | 'imagegrid'
+  | 'wordsearch'
+  | 'fillblanks'
+  | 'truefalse'
+  | 'riddle'
+  | 'tonguetwister'
+  | 'multiplechoice';
 
 export interface BaseElement {
   id: string;

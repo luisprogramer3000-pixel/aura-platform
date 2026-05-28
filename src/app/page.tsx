@@ -432,7 +432,7 @@ export default function Editor() {
 
   const addElement = (type: any, extraProps: any = {}) => {
     if (slides.length === 0) return;
-    let newElement: Partial<SlideElement> = {
+    let newElement: any = {
       id: `el-${Date.now()}`,
       type,
       left: 50,
@@ -1034,7 +1034,7 @@ export default function Editor() {
         }
         return <div />;
       default:
-        return <div style={{ color: 'white', padding: 10 }}>Block: {el.type}</div>;
+        return <div style={{ color: 'white', padding: 10 }}>Block: {(el as any).type}</div>;
     }
   };
 
