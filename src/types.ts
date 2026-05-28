@@ -7,9 +7,14 @@ export type BlockType =
   | 'reading' 
   | 'audio' 
   | 'image' 
+  | 'video'
   | 'dialogue' 
   | 'speaking' 
-  | 'dragdrop';
+  | 'dragdrop'
+  | 'scattercards'
+  | 'graphic'
+  | 'shape'
+  | 'imagegrid';
 
 export interface BaseElement {
   id: string;
@@ -50,6 +55,7 @@ export interface TextElement extends BaseElement {
   italic: boolean;
   underline?: boolean;
   fontFamily?: string;
+  textShadow?: string;
 }
 
 export interface VocabularyElement extends BaseElement {
@@ -87,6 +93,7 @@ export interface ReadingElement extends BaseElement {
 
 export interface AudioElement extends BaseElement {
   type: 'audio';
+  src?: string;
   transcript: string;
   speaker: 'male' | 'female';
   dialogueLines: Array<{ speaker: string; text: string }>;
@@ -119,6 +126,35 @@ export interface DragDropElement extends BaseElement {
   pairs: Array<{ left: string; right: string; id: string }>;
 }
 
+export interface VideoElement extends BaseElement {
+  type: 'video';
+  src: string;
+}
+
+export interface GraphicElement extends BaseElement {
+  type: 'graphic';
+  shapeType: string;
+  content?: string;
+  color?: string;
+}
+
+export interface ShapeElement extends BaseElement {
+  type: 'shape';
+  shapeType: string;
+  content?: string;
+  color?: string;
+}
+
+export interface ScatterCardsElement extends BaseElement {
+  type: 'scattercards';
+  cards: Array<{ id: number; body: string; question: string }>;
+}
+
+export interface ImageGridElement extends BaseElement {
+  type: 'imagegrid';
+  images: Array<{ src: string; alt: string; caption: string }>;
+}
+
 export type SlideElement =
   | TitleElement
   | TextElement
@@ -130,13 +166,18 @@ export type SlideElement =
   | ImageElement
   | DialogueElement
   | SpeakingElement
-  | DragDropElement;
+  | DragDropElement
+  | VideoElement
+  | GraphicElement
+  | ShapeElement
+  | ScatterCardsElement
+  | ImageGridElement;
 
 export interface Slide {
   id: string;
   type: string;
   background: string;
-  transition: 'none' | 'slide' | 'fade' | 'zoom';
+  transition: 'none' | 'slide' | 'fade' | 'zoom' | 'scale' | 'bounce';
   elements: SlideElement[];
 }
 
