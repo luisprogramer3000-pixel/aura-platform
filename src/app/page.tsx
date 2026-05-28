@@ -24,6 +24,145 @@ const initialSlides: Slide[] = INITIAL_SLIDES; // load all slides to showcase th
 
 const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 576;
+// --- INTERACTIVE COMPONENTS ---
+
+const InteractiveScatterCards = ({ cards }: { cards: any[] }) => {
+  const [flipped, setFlipped] = useState<number[]>([]);
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+      {cards?.map((card: any, i: number) => {
+        const rotation = i === 0 ? '-5deg' : i === 1 ? '5deg' : '0deg';
+        const left = i === 0 ? '0px' : '220px';
+        const top = i === 0 ? '20px' : '0px';
+        const isFlipped = flipped.includes(i);
+        return (
+          <div 
+            key={i} 
+            onClick={(e) => { e.stopPropagation(); setFlipped(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]); }}
+            style={{ 
+              position: 'absolute', left, top, width: '200px', height: '250px', cursor: 'pointer',
+              perspective: '1000px'
+            }}
+          >
+            <div style={{
+              width: '100%', height: '100%', position: 'relative', transition: 'transform 0.6s',
+              transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : `rotate(${rotation})`
+            }}>
+              {/* Front */}
+              <div style={{
+                position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
+                backgroundColor: '#fff', border: '3px solid #fca5a5', borderRadius: '8px', padding: '15px', 
+                boxShadow: '0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '10px'
+              }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #ef4444', color: '#ef4444', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{card.id}</div>
+                <div style={{ fontSize: '14px', color: '#333', marginTop: 'auto', marginBottom: 'auto', fontWeight: 'bold' }}>{card.body}</div>
+              </div>
+              {/* Back */}
+              <div style={{
+                position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
+                backgroundColor: '#fca5a5', border: '3px solid #ef4444', borderRadius: '8px', padding: '15px', 
+                boxShadow: '0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center'
+              }}>
+                <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{card.question}</div>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  );
+};
+
+const InteractiveQuiz = ({ question, options, correctAnswer }: { question: string, options: string[], correctAnswer: string }) => {
+  const [selected, setSelected] = useState<string | null>(null);
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[600px] pointer-events-auto">
+      <h3 className="text-2xl font-bold text-gray-800 mb-6 font-serif">{question}</h3>
+      <div className="flex flex-col gap-3">
+        {options.map((opt: string, i: number) => {
+          const isSelected = selected === opt;
+          const isCorrect = opt === correctAnswer;
+          let bgColor = 'bg-white hover:bg-gray-50';
+          let borderColor = 'border-gray-200';
+          if (selected) {
+            if (isCorrect) {
+              bgColor = 'bg-green-50'; borderColor = 'border-green-500';
+            } else if (isSelected) {
+              bgColor = 'bg-red-50'; borderColor = 'border-red-500';
+            }
+          }
+          return (
+            <div 
+              key={i} 
+              onClick={(e) => { e.stopPropagation(); if (!selected) setSelected(opt); }}
+              className={`p-4 rounded-lg border-2 ${bgColor} ${borderColor} cursor-pointer flex items-center gap-3 transition-colors`}
+            >
+              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selected && isCorrect ? 'border-green-500 bg-green-500' : selected && isSelected ? 'border-red-500 bg-red-500' : 'border-gray-300'}`}>
+                {selected && isCorrect && <CheckCircle2 className="w-4 h-4 text-white" />}
+              </div>
+              <span className={`text-lg ${selected && isCorrect ? 'text-green-700 font-bold' : selected && isSelected ? 'text-red-700' : 'text-gray-700'}`}>{opt}</span>
+            </div>
+          );
+        })}
+      </div>
+      {selected && (
+        <div className={`mt-6 p-4 rounded-lg ${selected === correctAnswer ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-bold text-center`}>
+          {selected === correctAnswer ? '¡Correcto! ¡Muy bien hecho!' : 'Incorrecto. La respuesta correcta era: ' + correctAnswer}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const InteractiveMatch = ({ pairs }: { pairs: {left: string, right: string}[] }) => {
+  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+  const [matches, setMatches] = useState<{[key: string]: string}>({});
+  
+  const handleLeftClick = (e: any, left: string) => { e.stopPropagation(); setSelectedLeft(left); };
+  const handleRightClick = (e: any, right: string) => { 
+    e.stopPropagation();
+    if (selectedLeft) {
+      setMatches(prev => ({...prev, [selectedLeft]: right}));
+      setSelectedLeft(null);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[700px] flex gap-8 pointer-events-auto">
+      <div className="flex-1 flex flex-col gap-4">
+        {pairs.map((p, i) => (
+          <div 
+            key={i} 
+            onClick={(e) => handleLeftClick(e, p.left)}
+            className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${matches[p.left] ? 'bg-indigo-50 border-indigo-200 text-indigo-700 opacity-50' : selectedLeft === p.left ? 'border-indigo-500 bg-indigo-50 shadow-md ring-2 ring-indigo-200' : 'border-gray-200 hover:border-indigo-300'}`}
+          >
+            {p.left}
+          </div>
+        ))}
+      </div>
+      <div className="w-12 flex flex-col items-center justify-center gap-2">
+        <ArrowRight className="text-gray-300 w-8 h-8" />
+        <span className="text-xs text-gray-400 font-bold">Unir</span>
+      </div>
+      <div className="flex-1 flex flex-col gap-4">
+        {pairs.map((p, i) => {
+          const isMatched = Object.values(matches).includes(p.right);
+          const matchedBy = Object.keys(matches).find(k => matches[k] === p.right);
+          return (
+            <div 
+              key={i} 
+              onClick={(e) => handleRightClick(e, p.right)}
+              className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${isMatched ? (p.left === matchedBy ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700') : selectedLeft ? 'border-indigo-300 bg-indigo-50 hover:bg-indigo-100 ring-2 ring-indigo-200' : 'border-gray-200'}`}
+            >
+              {p.right}
+              {isMatched && <div className="text-xs mt-1 font-bold opacity-70">Unido con: {matchedBy}</div>}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default function Editor() {
   const [slides, setSlides] = useState<Slide[]>(initialSlides);
@@ -513,6 +652,7 @@ export default function Editor() {
           </div>
         );
       case 'quiz':
+        if (isPlaying) return <InteractiveQuiz question={el.question} options={el.options} correctAnswer={el.options[el.correctIndex]} />;
         return (
           <div style={{
             width: '100%', height: '100%',
@@ -580,6 +720,7 @@ export default function Editor() {
           </div>
         );
       case 'dragdrop':
+        if (isPlaying && (el as any).pairs) return <InteractiveMatch pairs={(el as any).pairs} />;
         return (
           <div style={{
             width: '100%', height: '100%',
@@ -591,13 +732,17 @@ export default function Editor() {
             display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
           }}>
-             <h3 style={{ fontSize: '2cqw', fontWeight: 'bold', color: '#2563eb' }}>{el.instruction || "Relaciona los pares"}</h3>
-             <div style={{ display: 'flex', gap: '40px', width: '100%', justifyContent: 'space-around', marginTop: '20px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                   {(el as any).pairs?.map((p:any) => <div key={p.id} style={{ padding: '15px 25px', backgroundColor: '#f8fafc', borderRadius: '6px', fontSize: '1.5cqw', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>{p.left}</div>)}
+             <h3 style={{ fontSize: '1.8cqw', fontWeight: 'bold', color: '#db2777', textTransform: 'uppercase', letterSpacing: '1px' }}>Emparejar (Drag & Drop)</h3>
+             <div style={{ display: 'flex', gap: '40px', width: '100%' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                   {(el as any).pairs?.map((p: any, i: number) => (
+                      <div key={i} style={{ padding: '15px', backgroundColor: '#f1f5f9', borderRadius: '8px', border: '2px dashed #94a3b8', textAlign: 'center', fontSize: '1.4cqw' }}>{p.left}</div>
+                   ))}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                   {(el as any).pairs?.map((p:any) => <div key={p.id} style={{ padding: '15px 25px', backgroundColor: '#ffffff', border: '2px dashed #cbd5e1', borderRadius: '6px', fontSize: '1.5cqw', color: '#64748b' }}>{p.right}</div>).reverse()}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                   {(el as any).pairs?.map((p: any, i: number) => (
+                      <div key={i} style={{ padding: '15px', backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #cbd5e1', textAlign: 'center', fontSize: '1.4cqw', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>{p.right}</div>
+                   ))}
                 </div>
              </div>
           </div>
@@ -628,6 +773,7 @@ export default function Editor() {
           </div>
         );
       case 'scattercards':
+        if (isPlaying && (el as any).cards) return <InteractiveScatterCards cards={(el as any).cards} />;
         return (
           <div style={{ width: '100%', height: '100%', position: 'relative' }}>
              {(el as any).cards?.map((card: any, i: number) => {

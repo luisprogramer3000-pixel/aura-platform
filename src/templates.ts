@@ -379,126 +379,137 @@ export async function generateAILesson(
     
     const fallbackSlides: Slide[] = [];
     
-    // 1. COVER SLIDE - Oxford Editorial Style
-    fallbackSlides.push({
-      id: `slide-${uniqueId}-cover`,
-      type: 'cover',
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-      transition: 'fade',
-      elements: [
-        { id: `el-${uniqueId}-c-badge`, type: 'text', left: 80, top: 80, width: 200, height: 40, zIndex: 2, content: `NIVEL ${safeLevel}`, fontSize: 16, color: '#ffffff', backgroundColor: primary, borderRadius: 20, padding: 10, align: 'center', bold: true, italic: false },
-        { id: `el-${uniqueId}-c-subject`, type: 'text', left: 80, top: 140, width: 800, height: 30, zIndex: 2, content: `CLASE DE ${safeSubject.toUpperCase()}`, fontSize: 18, color: accent, align: 'left', bold: true, italic: false, textShadow: 'none' },
-        { id: `el-${uniqueId}-c-title`, type: 'title', left: 80, top: 180, width: 800, height: 160, zIndex: 2, content: safeTopic, fontSize: 64, color: '#ffffff', align: 'left', bold: true, italic: false },
-        { id: `el-${uniqueId}-c-sub`, type: 'text', left: 80, top: 340, width: 600, height: 80, zIndex: 2, content: `Aprenderemos sobre ${safeTopic} de forma interactiva y dinámica.`, fontSize: 24, color: '#94a3b8', align: 'left', bold: false, italic: false },
-        // Decorative shapes (Constructor Interactivo)
-        { id: `el-${uniqueId}-c-circle`, type: 'graphic', left: 750, top: 100, width: 200, height: 200, zIndex: 1, shapeType: 'circle', backgroundColor: 'transparent', borderColor: 'rgba(79, 70, 229, 0.5)' },
-        { id: `el-${uniqueId}-c-star`, type: 'graphic', left: 850, top: 250, width: 100, height: 100, zIndex: 1, shapeType: 'star', backgroundColor: accent, borderColor: 'transparent' }
-      ]
-    });
-    
-    // 2. GRAMMAR SLIDE - Clean Minimalist UI
-    fallbackSlides.push({
-      id: `slide-${uniqueId}-gram`,
-      type: 'grammar',
-      background: bgLight,
-      transition: 'slide',
-      elements: [
-        { id: `el-${uniqueId}-g-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'Estructura Gramatical', fontSize: 36, color: bgDark, align: 'left', bold: true, italic: false },
-        { id: `el-${uniqueId}-g-line`, type: 'text', left: 60, top: 110, width: 800, height: 2, zIndex: 1, content: '', backgroundColor: '#e2e8f0', fontSize: 10, color: 'transparent', align: 'left', bold: false, italic: false },
-        
-        { id: `el-${uniqueId}-g-card1`, type: 'grammar', left: 60, top: 150, width: 440, height: 350, zIndex: 3, 
-          ruleTitle: `Regla principal para: ${safeTopic}`,
-          explanation: `Aquí aprenderemos la regla fundamental sobre ${safeTopic}.`,
-          formula: 'Elemento A + Elemento B = Resultado',
-          example: 'Ejemplo generado por IA simulada...',
-          backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 2, borderColor: primary, padding: 24 
-        },
-        { id: `el-${uniqueId}-g-card2`, type: 'grammar', left: 520, top: 150, width: 440, height: 350, zIndex: 3, 
-          ruleTitle: 'Participio Pasado',
-          explanation: 'Verbos regulares añaden las siguientes terminaciones:',
-          formula: '-AR ➔ -ado (hablado)\n-ER/-IR ➔ -ido (comido)',
-          example: 'Nosotros hemos viajado a España.',
-          backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 2, borderColor: accent, padding: 24 
-        },
-        { id: `el-${uniqueId}-g-plus`, type: 'text', left: 475, top: 300, width: 70, height: 70, zIndex: 4, content: '+', fontSize: 40, color: '#ffffff', backgroundColor: bgDark, borderRadius: 35, padding: 0, align: 'center', bold: true, italic: false }
-      ]
-    });
+    // Arrays de contenido procedural para simular IA
+    const theoryTexts = [
+       `El concepto de ${safeTopic} es fundamental en este nivel.`,
+       `Para dominar ${safeTopic}, debes practicar constantemente.`,
+       `En esta sección, profundizaremos en los detalles de ${safeTopic}.`,
+       `Recuerda siempre las reglas principales de ${safeTopic}.`
+    ];
+    const verbs = ['ser', 'estar', 'hacer', 'tener', 'decir', 'ir', 'ver', 'dar', 'saber', 'querer'];
+    const vocabWords = ['Concepto', 'Ejemplo', 'Práctica', 'Regla', 'Excepción', 'Caso'];
 
-    // 3. INTERACTIVE COMPONENT - Scattercards for Irregular Participles
-    fallbackSlides.push({
-      id: `slide-${uniqueId}-scatter`,
-      type: 'interact',
-      background: '#f0f9ff',
-      transition: 'zoom',
-      elements: [
-        { id: `el-${uniqueId}-sc-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Casos especiales de ${safeTopic}`, fontSize: 36, color: '#0369a1', align: 'center', bold: true, italic: false },
-        { id: `el-${uniqueId}-sc-desc`, type: 'text', left: 60, top: 110, width: 800, height: 40, zIndex: 2, content: `Haz clic en las tarjetas para explorar ejemplos de ${safeTopic}`, fontSize: 20, color: '#0284c7', align: 'center', bold: false, italic: false },
-        
-        { id: `el-${uniqueId}-sc-cards`, type: 'scattercards', left: 200, top: 180, width: 600, height: 300, zIndex: 3, 
-          cards: [
-            { id: 1, body: 'VER', question: 'VISTO' },
-            { id: 2, body: 'ESCRIBIR', question: 'ESCRITO' },
-            { id: 3, body: 'HACER', question: 'HECHO' },
-            { id: 4, body: 'VOLVER', question: 'VUELTO' },
-            { id: 5, body: 'DECIR', question: 'DICHO' }
-          ]
-        }
-      ]
-    });
-
-    // 4. INTERACTIVE COMPONENT - Drag & Drop for Time Markers
-    fallbackSlides.push({
-      id: `slide-${uniqueId}-drag`,
-      type: 'dragdrop',
-      background: '#fef2f2',
-      transition: 'fade',
-      elements: [
-        { id: `el-${uniqueId}-dd-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'Marcadores Temporales', fontSize: 36, color: '#b91c1c', align: 'center', bold: true, italic: false },
-        { id: `el-${uniqueId}-dd-drag`, type: 'dragdrop', left: 112, top: 130, width: 800, height: 400, zIndex: 3, 
-          instruction: 'Une el marcador temporal con el contexto correcto.',
-          pairs: [
-            { id: 'p1', left: 'Hoy', right: '...he tomado un café con María.' },
-            { id: 'p2', left: 'Todavía no', right: '...hemos terminado los deberes.' },
-            { id: 'p3', left: 'Alguna vez', right: '¿...has estado en México?' },
-            { id: 'p4', left: 'Ya', right: '...he visto esa película.' }
-          ],
-          backgroundColor: '#ffffff', borderRadius: 24, borderWidth: 0, borderColor: '', padding: 30
-        }
-      ]
-    });
-
-    // 5. GAMIFICATION - Final Quiz
-    fallbackSlides.push({
-      id: `slide-${uniqueId}-quiz`,
-      type: 'quiz',
-      background: bgDark,
-      transition: 'scale',
-      elements: [
-        { id: `el-${uniqueId}-qz-title`, type: 'title', left: 60, top: 60, width: 800, height: 60, zIndex: 2, content: `Misión Final: Evaluación de ${safeTopic}`, fontSize: 40, color: accent, align: 'center', bold: true, italic: false },
-        { id: `el-${uniqueId}-qz-quiz`, type: 'quiz', left: 160, top: 160, width: 700, height: 350, zIndex: 3, 
-          question: `Pregunta de evaluación sobre: ${safeTopic}`,
-          options: [
-            'hemos hecho',
-            'han hecho',
-            'hemos hacido'
-          ],
-          correctIndex: 0,
-          backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', padding: 30
-        }
-      ]
-    });
-
-    // Adjust array size based on slideCount
-    if (slideCount < fallbackSlides.length) {
-       fallbackSlides.splice(slideCount);
-    } else {
-       let currentIndex = 1; // start from the grammar slide to copy
-       while (fallbackSlides.length < slideCount) {
-         const slideToCopy = fallbackSlides[currentIndex];
-         const newSlide = JSON.parse(JSON.stringify(slideToCopy));
-         newSlide.id = `slide-${uniqueId}-extra-${fallbackSlides.length}`;
-         fallbackSlides.push(newSlide);
-         currentIndex = currentIndex === 1 ? 2 : 1; // alternate
+    for (let i = 0; i < slideCount; i++) {
+       const slideId = `slide-${uniqueId}-${i}`;
+       
+       if (i === 0) {
+          // COVER
+          fallbackSlides.push({
+            id: slideId, type: 'cover', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', transition: 'fade',
+            elements: [
+              { id: `el-${i}-badge`, type: 'text', left: 80, top: 80, width: 200, height: 40, zIndex: 2, content: `NIVEL ${safeLevel}`, fontSize: 16, color: '#ffffff', backgroundColor: primary, borderRadius: 20, padding: 10, align: 'center', bold: true, italic: false },
+              { id: `el-${i}-subject`, type: 'text', left: 80, top: 140, width: 800, height: 30, zIndex: 2, content: `CLASE DE ${safeSubject.toUpperCase()}`, fontSize: 18, color: accent, align: 'left', bold: true, italic: false },
+              { id: `el-${i}-title`, type: 'title', left: 80, top: 180, width: 800, height: 160, zIndex: 2, content: safeTopic, fontSize: 64, color: '#ffffff', align: 'left', bold: true, italic: false },
+              { id: `el-${i}-sub`, type: 'text', left: 80, top: 340, width: 600, height: 80, zIndex: 2, content: `Aprenderemos sobre ${safeTopic} de forma interactiva y dinámica.`, fontSize: 24, color: '#94a3b8', align: 'left', bold: false, italic: false },
+              { id: `el-${i}-circle`, type: 'graphic', left: 750, top: 100, width: 200, height: 200, zIndex: 1, shapeType: 'circle', backgroundColor: 'transparent', borderColor: 'rgba(79, 70, 229, 0.5)' }
+            ]
+          });
+       } else if (i === slideCount - 1) {
+          // FINAL QUIZ
+          fallbackSlides.push({
+            id: slideId, type: 'quiz', background: bgDark, transition: 'scale',
+            elements: [
+              { id: `el-${i}-title`, type: 'title', left: 60, top: 60, width: 800, height: 60, zIndex: 2, content: `Misión Final: ${safeTopic}`, fontSize: 40, color: accent, align: 'center', bold: true, italic: false },
+              { id: `el-${i}-quiz`, type: 'quiz', left: 160, top: 160, width: 700, height: 350, zIndex: 3, 
+                question: `¿Cuál es la regla principal de ${safeTopic}?`,
+                options: ['La opción correcta', 'Una opción incorrecta', 'Otra opción trampa'],
+                correctIndex: 0,
+                backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', padding: 30
+              }
+            ]
+          });
+       } else {
+          // PROCEDURAL BODY SLIDES
+          const layoutType = i % 6; // Cycle through 6 layouts
+          switch (layoutType) {
+             case 1: // THEORY SPLIT (Text + Image)
+                fallbackSlides.push({
+                   id: slideId, type: 'theory', background: bgLight, transition: 'slide',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Comprendiendo ${safeTopic}`, fontSize: 36, color: bgDark, align: 'left', bold: true, italic: false },
+                      { id: `el-${i}-text`, type: 'text', left: 60, top: 130, width: 400, height: 300, zIndex: 2, content: theoryTexts[i % theoryTexts.length] + '\n\nEjemplo: ' + verbs[i % verbs.length], fontSize: 20, color: '#334155', align: 'left', bold: false, italic: false },
+                      { id: `el-${i}-img`, type: 'image', left: 520, top: 130, width: 400, height: 300, zIndex: 2, src: 'placeholder.jpg', alt: 'Imagen ilustrativa', contain: false, borderRadius: 16, borderWidth: 0, borderColor: '' }
+                   ]
+                });
+                break;
+             case 2: // GRAMMAR BOX
+                fallbackSlides.push({
+                   id: slideId, type: 'grammar', background: '#eff6ff', transition: 'fade',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'Estructura Gramatical', fontSize: 36, color: '#1e3a8a', align: 'left', bold: true, italic: false },
+                      { id: `el-${i}-gcard`, type: 'grammar', left: 212, top: 150, width: 600, height: 300, zIndex: 3, 
+                        ruleTitle: `Regla de ${safeTopic}`,
+                        explanation: `Uso específico #${i}`,
+                        formula: 'Sujeto + Verbo + Predicado',
+                        example: 'Nosotros entendemos la lección.',
+                        backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 2, borderColor: primary, padding: 24 
+                      }
+                   ]
+                });
+                break;
+             case 3: // INTERACTIVE MATCH
+                fallbackSlides.push({
+                   id: slideId, type: 'dragdrop', background: '#fef2f2', transition: 'zoom',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'Ejercicio Práctico', fontSize: 36, color: '#b91c1c', align: 'center', bold: true, italic: false },
+                      { id: `el-${i}-dd`, type: 'dragdrop', left: 162, top: 130, width: 700, height: 400, zIndex: 3, 
+                        instruction: 'Une los conceptos correctamente.',
+                        pairs: [
+                          { id: 'p1', left: `Concepto A (${i})`, right: 'Definición A' },
+                          { id: 'p2', left: `Concepto B (${i})`, right: 'Definición B' },
+                          { id: 'p3', left: `Concepto C (${i})`, right: 'Definición C' }
+                        ],
+                        backgroundColor: '#ffffff', borderRadius: 24, borderWidth: 0, borderColor: '', padding: 30
+                      }
+                   ]
+                });
+                break;
+             case 4: // DIALOGUE
+                fallbackSlides.push({
+                   id: slideId, type: 'dialogue', background: '#f8fafc', transition: 'slide',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'En Contexto', fontSize: 36, color: '#334155', align: 'left', bold: true, italic: false },
+                      { id: `el-${i}-dial`, type: 'dialogue', left: 112, top: 130, width: 800, height: 350, zIndex: 3, 
+                        characterA: 'Ana', characterB: 'Carlos',
+                        lines: [
+                          { speaker: 'A', text: `Hola, ¿has estudiado ${safeTopic}?` },
+                          { speaker: 'B', text: `¡Sí! Es muy interesante la regla número ${i}.` },
+                          { speaker: 'A', text: `¿Me puedes dar un ejemplo?` },
+                          { speaker: 'B', text: `Claro, por ejemplo usando el verbo "${verbs[i % verbs.length]}".` }
+                        ],
+                        backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#cbd5e1', padding: 30
+                      }
+                   ]
+                });
+                break;
+             case 5: // SCATTER CARDS
+                fallbackSlides.push({
+                   id: slideId, type: 'interact', background: '#fffbeb', transition: 'zoom',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Tarjetas de Repaso`, fontSize: 36, color: '#b45309', align: 'center', bold: true, italic: false },
+                      { id: `el-${i}-desc`, type: 'text', left: 60, top: 110, width: 800, height: 40, zIndex: 2, content: `Haz clic para voltear las tarjetas`, fontSize: 20, color: '#d97706', align: 'center', bold: false, italic: false },
+                      { id: `el-${i}-sc`, type: 'scattercards', left: 300, top: 180, width: 420, height: 300, zIndex: 3, 
+                        cards: [
+                          { id: 1, body: vocabWords[0], question: 'Explicación ' + vocabWords[0] },
+                          { id: 2, body: vocabWords[1], question: 'Explicación ' + vocabWords[1] },
+                          { id: 3, body: vocabWords[2], question: 'Explicación ' + vocabWords[2] }
+                        ]
+                      }
+                   ]
+                });
+                break;
+             case 0: // VOCABULARY GRID
+                fallbackSlides.push({
+                   id: slideId, type: 'vocab', background: bgLight, transition: 'slide',
+                   elements: [
+                      { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Vocabulario Clave`, fontSize: 36, color: bgDark, align: 'left', bold: true, italic: false },
+                      { id: `el-${i}-v1`, type: 'vocabulary', left: 60, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[i % vocabWords.length], english: 'Translation 1', example: 'Ejemplo de uso.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
+                      { id: `el-${i}-v2`, type: 'vocabulary', left: 370, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+1) % vocabWords.length], english: 'Translation 2', example: 'Otro ejemplo.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
+                      { id: `el-${i}-v3`, type: 'vocabulary', left: 680, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+2) % vocabWords.length], english: 'Translation 3', example: 'Más ejemplos.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 }
+                   ]
+                });
+                break;
+          }
        }
     }
 
