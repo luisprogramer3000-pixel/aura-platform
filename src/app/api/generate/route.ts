@@ -10,23 +10,28 @@ export async function POST(req: Request) {
     const apiKey = "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";
     const invoke_url = "https://integrate.api.nvidia.com/v1/chat/completions";
 
-    const systemPrompt = `Eres un experto diseñador curricular de la Universidad de Oxford. Tu objetivo es crear contenido de clase de altísima calidad en español para estudiantes de ${age} con un nivel ${level}. 
-El tema es: "${topic}".
-Necesitas proveer suficiente material rico para llenar ${slideCount} actividades.
+    const itemsCount = Math.max(5, Math.ceil(slideCount / 2));
+    
+    const systemPrompt = `Eres un experto diseñador curricular y pedagogo de la Universidad de Oxford. Tu objetivo es crear contenido de clase de altísima calidad en español para estudiantes de ${age} con un nivel ${level}.
+El tema de la clase es: "${topic}".
+
+INSTRUCCIONES CLAVE:
+1. HILO CONDUCTOR: Inventa un par de personajes (por ejemplo, Ana y Carlos, o nombres acordes al tema) que actúen como hilo conductor a lo largo de TODA la lección. Ellos deben protagonizar las lecturas, diálogos y ejemplos gramaticales.
+2. CALIDAD DE CONTENIDO: Razona como un tutor experto. La gramática debe estar explicada de forma impecable. Las preguntas deben hacer pensar al alumno.
+3. ESTILO VISUAL: Sugiere en 'imageKeyword' términos muy específicos (en inglés) que un diseñador usaría para buscar fotografías de archivo de alta calidad (ej. "students studying library bright", "two professionals talking office").
+4. ESCALABILIDAD: Necesitamos contenido abundante para ${slideCount} diapositivas. Genera AL MENOS ${itemsCount} elementos en CADA arreglo para evitar que la plataforma repita diapositivas.
 
 Debes devolver EXCLUSIVAMENTE un objeto JSON válido con la siguiente estructura, sin formato Markdown alrededor:
 {
-  "readings": [ { "title": "...", "text": "Un cuento o lectura de al menos 3 párrafos", "question": "pregunta", "options": ["A", "B", "C"], "correctIndex": 0, "imageKeyword": "palabra en ingles para buscar foto" } ],
-  "vocabulary": [ { "spanish": "...", "english": "...", "pronunciation": "...", "example": "..." } ],
+  "readings": [ { "title": "...", "text": "Historia con los personajes...", "question": "pregunta inferencial", "options": ["A", "B", "C"], "correctIndex": 0, "imageKeyword": "photo search term" } ],
+  "vocabulary": [ { "spanish": "...", "english": "...", "pronunciation": "...", "example": "Oración usando a los personajes..." } ],
   "grammarRules": [ { "ruleTitle": "...", "explanation": "...", "example": "..." } ],
   "riddles": [ { "riddle": "...", "answer": "..." } ],
   "tonguetwisters": [ { "twister": "...", "level": "medium" } ],
   "trueFalse": [ { "statement": "...", "isTrue": true, "explanation": "..." } ],
   "multipleChoice": [ { "question": "...", "options": [ {"text": "...", "isCorrect": true}, {"text": "...", "isCorrect": false} ] } ],
-  "dialogues": [ { "characterA": "...", "characterB": "...", "lines": [ {"speaker": "A", "text": "..."}, {"speaker": "B", "text": "..."} ] } ]
-}
-
-Asegúrate de generar AL MENOS 5 elementos en cada arreglo para tener variedad.`;
+  "dialogues": [ { "characterA": "Personaje 1", "characterB": "Personaje 2", "lines": [ {"speaker": "A", "text": "..."}, {"speaker": "B", "text": "..."} ] } ]
+}`;
 
     const providers = [
       { key: "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", model: "stepfun-ai/step-3.7-flash" },

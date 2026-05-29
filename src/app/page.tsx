@@ -815,7 +815,8 @@ export default function Editor() {
             textDecoration: (el as any).underline ? 'underline' : 'none',
             fontFamily: (el as any).fontFamily || 'sans-serif',
             width: '100%', height: '100%',
-            display: 'flex', alignItems: 'center', justifyContent: el.align === 'center' ? 'center' : el.align === 'right' ? 'flex-end' : 'flex-start'
+            display: 'flex', alignItems: 'center', justifyContent: el.align === 'center' ? 'center' : el.align === 'right' ? 'flex-end' : 'flex-start',
+            overflow: 'hidden'
           }}>
             {el.content}
           </div>
@@ -837,7 +838,8 @@ export default function Editor() {
             borderRadius: (el as any).borderRadius || '0px',
             border: (el as any).borderWidth ? `${(el as any).borderWidth}px solid ${(el as any).borderColor}` : 'none',
             clipPath: (el as any).clipPath || 'none',
-            textShadow: (el as any).textShadow || 'none'
+            textShadow: (el as any).textShadow || 'none',
+            overflowY: 'auto'
           }}>
             {el.content}
           </div>
@@ -870,7 +872,7 @@ export default function Editor() {
         );
       case 'vocabulary':
         return (
-          <div className="w-full h-full bg-white border border-slate-300 p-8 flex flex-col justify-center gap-4 relative pointer-events-auto shadow-sm">
+          <div className="w-full h-full bg-white border border-slate-300 p-8 flex flex-col justify-center gap-4 relative pointer-events-auto shadow-sm overflow-y-auto">
              <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
              <h3 className="text-[2.5cqw] font-bold font-serif text-indigo-900 mb-2 tracking-tight">{el.spanish}</h3>
              <div className="flex flex-col gap-1">
@@ -884,7 +886,7 @@ export default function Editor() {
         );
       case 'grammar':
         return (
-          <div className="w-full h-full bg-[#fcfbf9] rounded-none border-[3px] border-[#1e3a8a] p-10 flex flex-col gap-6 relative overflow-hidden shadow-lg pointer-events-auto">
+          <div className="w-full h-full bg-[#fcfbf9] rounded-none border-[3px] border-[#1e3a8a] p-10 flex flex-col gap-6 relative overflow-y-auto shadow-lg pointer-events-auto">
             <div className="absolute top-0 left-0 w-3 h-full bg-[#1e3a8a]"></div>
             <div className="absolute -bottom-10 -right-10 opacity-5">
                <svg width="250" height="250" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2z"/></svg>
@@ -945,7 +947,8 @@ export default function Editor() {
             padding: '30px',
             color: '#1e293b',
             display: 'flex', flexDirection: 'column', gap: '20px',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            overflowY: 'auto'
           }}>
             <h3 style={{ fontSize: '1.8cqw', fontWeight: 'bold', color: '#2563eb', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Diálogo</h3>
             {(el as any).lines?.map((line: any, i: number) => (
