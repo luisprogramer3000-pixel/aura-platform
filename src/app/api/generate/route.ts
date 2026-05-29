@@ -28,35 +28,52 @@ Debes devolver EXCLUSIVAMENTE un objeto JSON válido con la siguiente estructura
 
 Asegúrate de generar AL MENOS 5 elementos en cada arreglo para tener variedad.`;
 
-    const payload = {
-      model: "stepfun-ai/step-3.7-flash",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `Genera el material educativo para el tema: ${topic}` }
-      ],
-      max_tokens: 4096,
-      temperature: 0.7,
-      stream: false
-    };
+    const providers = [
+      { key: "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", model: "stepfun-ai/step-3.7-flash" },
+      { key: "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", model: "minimaxai/minimax-m2.7" }
+    ];
 
-    const response = await fetch(invoke_url, {
-      method: 'POST',
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+    let contentStr = '';
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Nvidia API Error:", errorText);
-      return NextResponse.json({ error: 'Failed to fetch from Nvidia API' }, { status: 500 });
+    for (const provider of providers) {
+      try {
+        const payload = {
+          model: provider.model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `Genera el material educativo para el tema: ${topic}` }
+          ],
+          max_tokens: 4096,
+          temperature: 0.7,
+          stream: false
+        };
+
+        const response = await fetch(invoke_url, {
+          method: 'POST',
+          headers: {
+            "Authorization": `Bearer ${provider.key}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          contentStr = data.choices[0].message.content;
+          break; // Success, exit loop
+        } else {
+          console.error(`Nvidia API Error with ${provider.model}:`, await response.text());
+        }
+      } catch (err) {
+        console.error(`Fetch error with ${provider.model}:`, err);
+      }
     }
 
-    const data = await response.json();
-    const contentStr = data.choices[0].message.content;
+    if (!contentStr) {
+      return NextResponse.json({ error: 'All Nvidia APIs failed' }, { status: 500 });
+    }
+    
     
     // Attempt to parse JSON safely (removing markdown code blocks if the LLM hallucinated them)
     const jsonMatch = contentStr.match(/\{[\s\S]*\}/);

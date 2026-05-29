@@ -453,7 +453,7 @@ export async function generateAILesson(
                    elements: [
                       { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Comprendiendo ${safeTopic}`, fontSize: 36, color: bgDark, align: 'left', bold: true, italic: false },
                       { id: `el-${i}-text`, type: 'text', left: 60, top: 130, width: 400, height: 300, zIndex: 2, content: theoryTexts[i % theoryTexts.length] + '\n\nEjemplo: ' + verbs[i % verbs.length], fontSize: 20, color: '#334155', align: 'left', bold: false, italic: false },
-                      { id: `el-${i}-img`, type: 'image', left: 520, top: 130, width: 400, height: 300, zIndex: 2, src: 'placeholder.jpg', alt: 'Imagen ilustrativa', contain: false, borderRadius: 16, borderWidth: 0, borderColor: '' }
+                      { id: `el-${i}-img`, type: 'image', left: 520, top: 130, width: 400, height: 300, zIndex: 2, src: `https://loremflickr.com/800/600/${encodeURIComponent(safeTopic.split(' ')[0])}`, alt: 'Imagen ilustrativa', contain: false, borderRadius: 16, borderWidth: 0, borderColor: '' }
                    ]
                 });
                 break;
@@ -462,7 +462,7 @@ export async function generateAILesson(
                 fallbackSlides.push({
                    id: slideId, type: 'reading', background: '#fff', transition: 'fade',
                    elements: [
-                      { id: `el-${i}-rd`, type: 'reading', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, title: reading.title, text: reading.text, question: reading.question, options: reading.options, correctIndex: reading.correctIndex || 0, backgroundColor: '#ffffff', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-rd`, type: 'reading', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, title: reading.title, text: reading.text, question: reading.question, options: reading.options, correctIndex: reading.correctIndex || 0, image: `https://loremflickr.com/400/600/${encodeURIComponent(reading.imageKeyword || safeTopic.split(' ')[0])}`, backgroundColor: '#ffffff', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;

@@ -782,40 +782,39 @@ export default function Editor() {
         );
       case 'vocabulary':
         return (
-          <div style={{
-            width: '100%', height: '100%',
-            backgroundColor: '#ffffff', // Force Oxford White
-            border: '1px solid #cbd5e1', // Force Oxford Border
-            borderRadius: '0px', // Force sharp corners
-            padding: el.padding || '20px',
-            color: '#0f172a',
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px',
-            boxShadow: 'none'
-          }}>
-            <h3 style={{ fontSize: '2cqw', fontWeight: 'bold', fontFamily: 'serif', color: '#1e3a8a' }}>{el.spanish}</h3>
-            <p style={{ fontSize: '1.2cqw', color: '#64748b' }}>{el.pronunciation}</p>
-            <p style={{ fontSize: '1.5cqw', color: '#0f172a' }}>{el.english}</p>
-            <div style={{ marginTop: '10px', fontSize: '1.2cqw', fontStyle: 'italic', borderLeft: '3px solid #b45309', paddingLeft: '10px' }}>"{el.example}"</div>
+          <div className="w-full h-full bg-white border border-slate-300 p-8 flex flex-col justify-center gap-4 relative pointer-events-auto shadow-sm">
+             <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+             <h3 className="text-[2.5cqw] font-bold font-serif text-indigo-900 mb-2 tracking-tight">{el.spanish}</h3>
+             <div className="flex flex-col gap-1">
+               <span className="text-[2cqw] text-slate-800 font-bold font-sans">{el.english}</span>
+               <span className="text-[1.3cqw] text-slate-500 font-mono bg-slate-100 px-2 py-1 rounded w-max">/{el.pronunciation}/</span>
+             </div>
+             <div className="mt-4 text-[1.5cqw] font-serif italic border-l-4 border-indigo-200 pl-4 text-slate-600">
+               "{el.example}"
+             </div>
           </div>
         );
       case 'grammar':
         return (
-          <div style={{
-            width: '100%', height: '100%',
-            backgroundColor: '#eff6ff', // Force Oxford Light Blue
-            borderRadius: '0px',
-            border: '1px solid #1e3a8a', // Force Oxford Blue Border
-            padding: el.padding || '30px',
-            color: '#0f172a',
-            display: 'flex', flexDirection: 'column', gap: '16px',
-            boxShadow: 'none'
-          }}>
-            <h3 style={{ fontSize: '2.5cqw', fontWeight: 'bold', color: '#1e3a8a', fontFamily: 'serif' }}>{el.ruleTitle}</h3>
-            <p style={{ fontSize: '1.5cqw', fontFamily: 'serif' }}>{el.explanation}</p>
-            <div style={{ backgroundColor: '#f1f5f9', padding: '15px', borderRadius: '4px', fontSize: '1.4cqw', fontFamily: 'monospace', color: '#0f172a', border: '1px solid #e2e8f0' }}>
-              {el.formula}
+          <div className="w-full h-full bg-[#fcfbf9] rounded-none border-[3px] border-[#1e3a8a] p-10 flex flex-col gap-6 relative overflow-hidden shadow-lg pointer-events-auto">
+            <div className="absolute top-0 left-0 w-3 h-full bg-[#1e3a8a]"></div>
+            <div className="absolute -bottom-10 -right-10 opacity-5">
+               <svg width="250" height="250" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2z"/></svg>
             </div>
-            <p style={{ fontSize: '1.4cqw', fontStyle: 'italic', whiteSpace: 'pre-wrap', color: '#475569' }}>{el.example}</p>
+            <h3 className="text-[2.5cqw] font-bold text-[#1e3a8a] font-serif border-b border-indigo-200 pb-2 inline-block z-10 tracking-widest uppercase">{el.ruleTitle}</h3>
+            <p className="text-[1.6cqw] font-serif text-[#334155] leading-relaxed z-10">{el.explanation}</p>
+            
+            {el.formula && (
+              <div className="bg-white p-6 rounded-none text-[1.5cqw] font-mono text-[#1e3a8a] border border-[#e2e8f0] shadow-sm z-10 relative mt-4">
+                 <div className="absolute -top-3 left-4 bg-indigo-900 text-white text-[1cqw] font-bold px-3 py-1 uppercase tracking-widest font-sans">Formula</div>
+                 {el.formula}
+              </div>
+            )}
+            
+            <p className="text-[1.5cqw] font-serif italic text-[#475569] border-l-4 border-amber-500 pl-5 py-3 mt-4 z-10 bg-gradient-to-r from-amber-50/80 to-transparent">
+               <span className="font-bold text-amber-800 not-italic uppercase tracking-widest text-[1cqw] block mb-1">Ejemplo</span>
+               "{el.example}"
+            </p>
           </div>
         );
       case 'quiz':
@@ -1017,14 +1016,31 @@ export default function Editor() {
         );
       case 'reading':
         return (
-          <div className="flex w-full h-full bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-             <div className="flex-1 p-10 overflow-y-auto">
-               <h3 className="text-3xl font-bold text-gray-900 mb-6">{(el as any).title}</h3>
-               <p className="text-xl text-gray-700 leading-relaxed font-serif whitespace-pre-wrap">{(el as any).text}</p>
+          <div className="flex w-full h-full bg-[#fcfbf9] shadow-[0_15px_35px_rgba(0,0,0,0.08)] border-x border-y border-[#e6e2dd] overflow-hidden pointer-events-auto">
+             <div className="flex-1 px-16 py-12 overflow-y-auto bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
+               <h3 className="text-4xl font-bold text-[#1a202c] mb-8 font-serif border-b-2 border-indigo-900 pb-4 inline-block tracking-tight">{(el as any).title}</h3>
+               <p className="text-xl text-[#2d3748] leading-[1.8] font-serif whitespace-pre-wrap first-letter:text-6xl first-letter:font-bold first-letter:text-indigo-900 first-letter:float-left first-letter:mr-3">{(el as any).text}</p>
+               
+               {((el as any).question && (el as any).options) && (
+                 <div className="mt-12 bg-white/80 p-6 border-l-4 border-indigo-900 rounded-r-lg shadow-sm">
+                   <h4 className="font-bold text-indigo-900 mb-4 font-sans uppercase text-sm tracking-widest">Comprehension Check</h4>
+                   <p className="font-semibold text-gray-800 font-sans mb-4 text-lg">{(el as any).question}</p>
+                   <div className="flex flex-col gap-2">
+                     {((el as any).options).map((opt: string, idx: number) => (
+                       <div key={idx} className="px-4 py-3 bg-slate-50 border border-slate-200 rounded text-md text-slate-700 hover:bg-indigo-50 hover:border-indigo-300 cursor-pointer transition-colors font-sans flex items-center gap-3">
+                          <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-800 flex items-center justify-center text-xs font-bold">{String.fromCharCode(65+idx)}</span>
+                          {opt}
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
              </div>
              {(el as any).image && (
-               <div className="w-1/3 bg-gray-100 flex-shrink-0">
-                 <img src={(el as any).image} alt="Reading related" className="w-full h-full object-cover" />
+               <div className="w-[40%] bg-slate-200 flex-shrink-0 relative border-l border-slate-300">
+                 <img src={(el as any).image} alt="Reading related" className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" />
+                 <div className="absolute inset-0 ring-1 ring-inset ring-black/10"></div>
+                 <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/60 to-transparent"></div>
                </div>
              )}
           </div>
