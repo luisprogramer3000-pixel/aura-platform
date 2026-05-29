@@ -348,7 +348,8 @@ export async function generateAILesson(
   level: string, 
   subject: string,
   slideCount: number = 5,
-  imageType: string = 'illustrative'
+  imageType: string = 'illustrative',
+  aiData: any = null
 ): Promise<Slide[]> {
     const uniqueId = `ai-${Date.now()}`;
 
@@ -379,15 +380,30 @@ export async function generateAILesson(
     
     const fallbackSlides: Slide[] = [];
     
-    // Arrays de contenido procedural para simular IA
-    const theoryTexts = [
+    // Arrays de contenido: usar aiData si existe, sino simular
+    const theoryTexts = aiData?.readings?.map((r:any) => r.text) || [
        `El concepto de ${safeTopic} es fundamental en este nivel.`,
        `Para dominar ${safeTopic}, debes practicar constantemente.`,
        `En esta sección, profundizaremos en los detalles de ${safeTopic}.`,
        `Recuerda siempre las reglas principales de ${safeTopic}.`
     ];
-    const verbs = ['ser', 'estar', 'hacer', 'tener', 'decir', 'ir', 'ver', 'dar', 'saber', 'querer'];
-    const vocabWords = ['Concepto', 'Ejemplo', 'Práctica', 'Regla', 'Excepción', 'Caso'];
+    
+    // Obtenemos palabras de vocabulario
+    const vocabWords = aiData?.vocabulary?.map((v:any) => v.spanish) || ['Concepto', 'Ejemplo', 'Práctica', 'Regla', 'Excepción', 'Caso'];
+    const englishWords = aiData?.vocabulary?.map((v:any) => v.english) || ['Concept', 'Example', 'Practice', 'Rule', 'Exception', 'Case'];
+    const vocabEx = aiData?.vocabulary?.map((v:any) => v.example) || ['Ejemplo de uso.', 'Otro ejemplo.', 'Más ejemplos.'];
+    const vocabPron = aiData?.vocabulary?.map((v:any) => v.pronunciation) || ['/fo-ne-tik/'];
+    
+    // Obtenemos frases u oraciones cortas para usar de "verbs" en los mini ejercicios
+    const verbs = aiData?.multipleChoice?.map((m:any) => m.options.find((o:any) => o.isCorrect)?.text || 'Verbo') || ['ser', 'estar', 'hacer', 'tener', 'decir', 'ir', 'ver', 'dar', 'saber', 'querer'];
+
+    const getReading = (idx: number) => aiData?.readings?.[idx % aiData.readings.length] || { title: `Lectura sobre ${safeTopic}`, text: `Había una vez un pequeño pueblo donde todos querían aprender sobre ${safeTopic}. La maestra explicó que los verbos como "${verbs[0]}" y "${verbs[1]}" son muy importantes para la comunicación diaria.\n\nLos estudiantes escucharon atentamente y practicaron en casa.`, question: '¿De qué trata la lectura?', options: ['De un pueblo', 'De la maestra', safeTopic], correctIndex: 2 };
+    const getGrammar = (idx: number) => aiData?.grammarRules?.[idx % aiData.grammarRules.length] || { ruleTitle: `Regla de ${safeTopic}`, explanation: `Uso específico #${idx}`, example: 'Nosotros entendemos la lección.' };
+    const getRiddle = (idx: number) => aiData?.riddles?.[idx % aiData.riddles.length] || { riddle: `Soy una palabra que usas al hablar de ${safeTopic}. Tengo ${verbs[0].length} letras y empiezo con ${verbs[0][0].toUpperCase()}. ¿Quién soy?`, answer: verbs[0] };
+    const getTwister = (idx: number) => aiData?.tonguetwisters?.[idx % aiData.tonguetwisters.length] || { twister: `Tres tristes tigres tragaban trigo al estudiar ${safeTopic} en un trigal.`, level: 'hard' };
+    const getTF = (idx: number) => aiData?.trueFalse?.[idx % aiData.trueFalse.length] || { statement: `El verbo "${verbs[idx%verbs.length]}" siempre sigue la regla general de ${safeTopic}.`, isTrue: idx % 2 === 0, explanation: `En realidad, esto depende del contexto, pero para este ejercicio asumiremos que es ${idx % 2 === 0 ? 'Verdadero' : 'Falso'}.` };
+    const getMC = (idx: number) => aiData?.multipleChoice?.[idx % aiData.multipleChoice.length] || { question: `¿Cuál de estos es un ejemplo correcto de ${safeTopic}?`, options: [{text: verbs[0], isCorrect: true}, {text: 'Opción incorrecta', isCorrect: false}, {text: 'Nada que ver', isCorrect: false}, {text: verbs[1], isCorrect: false}] };
+    const getDialogue = (idx: number) => aiData?.dialogues?.[idx % aiData.dialogues.length] || { characterA: 'Ana', characterB: 'Carlos', lines: [ { speaker: 'A', text: `Hola, ¿has estudiado ${safeTopic}?` }, { speaker: 'B', text: `¡Sí! Es muy interesante.` }, { speaker: 'A', text: `¿Me puedes dar un ejemplo?` }, { speaker: 'B', text: `Claro, por ejemplo usando la palabra "${verbs[idx % verbs.length]}".` } ] };
 
     for (let i = 0; i < slideCount; i++) {
        const slideId = `slide-${uniqueId}-${i}`;
@@ -442,10 +458,11 @@ export async function generateAILesson(
                 });
                 break;
              case 'reading':
+                const reading = getReading(i);
                 fallbackSlides.push({
                    id: slideId, type: 'reading', background: '#fff', transition: 'fade',
                    elements: [
-                      { id: `el-${i}-rd`, type: 'reading', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, title: `Lectura sobre ${safeTopic}`, text: `Había una vez un pequeño pueblo donde todos querían aprender sobre ${safeTopic}. La maestra explicó que los verbos como "${verbs[0]}" y "${verbs[1]}" son muy importantes para la comunicación diaria.\n\nLos estudiantes escucharon atentamente y practicaron en casa.`, question: '¿De qué trata la lectura?', options: ['De un pueblo', 'De la maestra', safeTopic], correctIndex: 2, backgroundColor: '#ffffff', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-rd`, type: 'reading', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, title: reading.title, text: reading.text, question: reading.question, options: reading.options, correctIndex: reading.correctIndex || 0, backgroundColor: '#ffffff', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;
@@ -474,47 +491,52 @@ export async function generateAILesson(
                 });
                 break;
              case 'truefalse':
+                const tf = getTF(i);
                 fallbackSlides.push({
                    id: slideId, type: 'truefalse', background: '#f0fdf4', transition: 'fade',
                    elements: [
-                      { id: `el-${i}-tf`, type: 'truefalse', left: 212, top: 80, width: 600, height: 400, zIndex: 3, statement: `El verbo "${verbs[i%verbs.length]}" siempre sigue la regla general de ${safeTopic}.`, isTrue: i % 2 === 0, explanation: `En realidad, esto depende del contexto, pero para este ejercicio asumiremos que es ${i % 2 === 0 ? 'Verdadero' : 'Falso'}.`, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-tf`, type: 'truefalse', left: 212, top: 80, width: 600, height: 400, zIndex: 3, statement: tf.statement, isTrue: tf.isTrue, explanation: tf.explanation, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;
              case 'riddle':
+                const rid = getRiddle(i);
                 fallbackSlides.push({
                    id: slideId, type: 'riddle', background: '#fefce8', transition: 'zoom',
                    elements: [
-                      { id: `el-${i}-rid`, type: 'riddle', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, riddle: `Soy una palabra que usas al hablar de ${safeTopic}. Tengo ${verbs[0].length} letras y empiezo con ${verbs[0][0].toUpperCase()}. ¿Quién soy?`, answer: verbs[0], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-rid`, type: 'riddle', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, riddle: rid.riddle, answer: rid.answer, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;
              case 'tonguetwister':
+                const tw = getTwister(i);
                 fallbackSlides.push({
                    id: slideId, type: 'tonguetwister', background: '#fdf2f8', transition: 'slide',
                    elements: [
-                      { id: `el-${i}-tt`, type: 'tonguetwister', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, twister: `Tres tristes tigres tragaban trigo al estudiar ${safeTopic} en un trigal.`, level: 'hard', backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-tt`, type: 'tonguetwister', left: 0, top: 0, width: 1024, height: 576, zIndex: 3, twister: tw.twister, level: tw.level || 'medium', backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;
              case 'multiplechoice':
+                const mc = getMC(i);
                 fallbackSlides.push({
                    id: slideId, type: 'multiplechoice', background: '#faf5ff', transition: 'fade',
                    elements: [
-                      { id: `el-${i}-mc`, type: 'multiplechoice', left: 162, top: 80, width: 700, height: 400, zIndex: 3, question: `¿Cuál de estos es un ejemplo correcto de ${safeTopic}?`, options: [{text: verbs[0], isCorrect: true}, {text: 'Opción incorrecta', isCorrect: false}, {text: 'Nada que ver', isCorrect: false}, {text: verbs[1], isCorrect: false}], backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
+                      { id: `el-${i}-mc`, type: 'multiplechoice', left: 162, top: 80, width: 700, height: 400, zIndex: 3, question: mc.question, options: mc.options, backgroundColor: 'transparent', borderRadius: 0, borderWidth: 0, borderColor: '', padding: 0 }
                    ]
                 });
                 break;
              case 'grammar': // GRAMMAR BOX
+                const gr = getGrammar(i);
                 fallbackSlides.push({
                    id: slideId, type: 'grammar', background: '#eff6ff', transition: 'fade',
                    elements: [
                       { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'Estructura Gramatical', fontSize: 36, color: '#1e3a8a', align: 'left', bold: true, italic: false },
                       { id: `el-${i}-gcard`, type: 'grammar', left: 212, top: 150, width: 600, height: 300, zIndex: 3, 
-                        ruleTitle: `Regla de ${safeTopic}`,
-                        explanation: `Uso específico #${i}`,
-                        formula: 'Sujeto + Verbo + Predicado',
-                        example: 'Nosotros entendemos la lección.',
+                        ruleTitle: gr.ruleTitle,
+                        explanation: gr.explanation,
+                        formula: gr.formula || 'Sujeto + Verbo',
+                        example: gr.example,
                         backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 2, borderColor: primary, padding: 24 
                       }
                    ]
@@ -538,18 +560,14 @@ export async function generateAILesson(
                 });
                 break;
              case 'dialogue': // DIALOGUE
+                const dial = getDialogue(i);
                 fallbackSlides.push({
                    id: slideId, type: 'dialogue', background: '#f8fafc', transition: 'slide',
                    elements: [
                       { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: 'En Contexto', fontSize: 36, color: '#334155', align: 'left', bold: true, italic: false },
                       { id: `el-${i}-dial`, type: 'dialogue', left: 112, top: 130, width: 800, height: 350, zIndex: 3, 
-                        characterA: 'Ana', characterB: 'Carlos',
-                        lines: [
-                          { speaker: 'A', text: `Hola, ¿has estudiado ${safeTopic}?` },
-                          { speaker: 'B', text: `¡Sí! Es muy interesante la regla número ${i}.` },
-                          { speaker: 'A', text: `¿Me puedes dar un ejemplo?` },
-                          { speaker: 'B', text: `Claro, por ejemplo usando el verbo "${verbs[i % verbs.length]}".` }
-                        ],
+                        characterA: dial.characterA, characterB: dial.characterB,
+                        lines: dial.lines,
                         backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#cbd5e1', padding: 30
                       }
                    ]
@@ -576,9 +594,9 @@ export async function generateAILesson(
                    id: slideId, type: 'vocab', background: bgLight, transition: 'slide',
                    elements: [
                       { id: `el-${i}-title`, type: 'title', left: 60, top: 50, width: 800, height: 60, zIndex: 2, content: `Vocabulario Clave`, fontSize: 36, color: bgDark, align: 'left', bold: true, italic: false },
-                      { id: `el-${i}-v1`, type: 'vocabulary', left: 60, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[i % vocabWords.length], english: 'Translation 1', example: 'Ejemplo de uso.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
-                      { id: `el-${i}-v2`, type: 'vocabulary', left: 370, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+1) % vocabWords.length], english: 'Translation 2', example: 'Otro ejemplo.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
-                      { id: `el-${i}-v3`, type: 'vocabulary', left: 680, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+2) % vocabWords.length], english: 'Translation 3', example: 'Más ejemplos.', pronunciation: '/fo-ne-tik/', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 }
+                      { id: `el-${i}-v1`, type: 'vocabulary', left: 60, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[i % vocabWords.length], english: englishWords[i % englishWords.length], example: vocabEx[i % vocabEx.length], pronunciation: vocabPron[i % vocabPron.length] || '', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
+                      { id: `el-${i}-v2`, type: 'vocabulary', left: 370, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+1) % vocabWords.length], english: englishWords[(i+1) % englishWords.length], example: vocabEx[(i+1) % vocabEx.length], pronunciation: vocabPron[(i+1) % vocabPron.length] || '', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 },
+                      { id: `el-${i}-v3`, type: 'vocabulary', left: 680, top: 130, width: 280, height: 300, zIndex: 3, spanish: vocabWords[(i+2) % vocabWords.length], english: englishWords[(i+2) % englishWords.length], example: vocabEx[(i+2) % vocabEx.length], pronunciation: vocabPron[(i+2) % vocabPron.length] || '', backgroundColor: '#ffffff', borderRadius: 16, borderWidth: 1, borderColor: '#e2e8f0', padding: 20 }
                    ]
                 });
                 break;

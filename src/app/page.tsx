@@ -666,18 +666,39 @@ export default function Editor() {
 
   const handleGenerateAI = async () => {
     if (!aiForm.topic) return;
-    const generated = await generateAILesson(
-      aiForm.topic, 
-      aiForm.age, 
-      'A1-A2', 
-      aiForm.subject, 
-      aiForm.slideCount, 
-      aiForm.imageType
-    );
-    setLayoutFormat('horizontal');
-    setSlides(generated);
-    setActiveSlideIndex(0);
-    setShowAIPanel(false);
+    setIsAILoading(true); // Assuming we have or will add this state
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aiForm)
+      });
+      const aiData = await res.json();
+      
+      const generated = await generateAILesson(
+        aiForm.topic, 
+        aiForm.age, 
+        'A1-A2', 
+        aiForm.subject, 
+        aiForm.slideCount, 
+        aiForm.imageType,
+        aiData
+      );
+      setLayoutFormat('horizontal');
+      setSlides(generated);
+      setActiveSlideIndex(0);
+      setShowAIPanel(false);
+    } catch (e) {
+      console.error("AI Gen Error", e);
+      alert("Hubo un error al conectar con la IA. Se usará el contenido por defecto.");
+      const fallback = await generateAILesson(aiForm.topic, aiForm.age, 'A1-A2', aiForm.subject, aiForm.slideCount, aiForm.imageType, null);
+      setLayoutFormat('horizontal');
+      setSlides(fallback);
+      setActiveSlideIndex(0);
+      setShowAIPanel(false);
+    } finally {
+      setIsAILoading(false);
+    }
   };
 
   const handleGenerateWorksheet = async () => {
