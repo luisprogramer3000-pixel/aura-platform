@@ -175,20 +175,40 @@ const InteractiveWordSearch = ({ words, gridSize = 10 }: { words: string[], grid
   const [selectedCells, setSelectedCells] = useState<{r:number, c:number}[]>([]);
   const [foundWords, setFoundWords] = useState<string[]>([]);
   
-  // Basic mock grid generation for demo
   useEffect(() => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const newGrid = Array(gridSize).fill(null).map(() => 
       Array(gridSize).fill(null).map(() => letters[Math.floor(Math.random() * letters.length)])
     );
-    // Hardcode words into first few rows just for demo
-    words.forEach((w, i) => {
-      if(i < gridSize) {
-        for(let j=0; j<w.length && j<gridSize; j++) {
-          newGrid[i][j] = w[j].toUpperCase();
+    
+    const placeWord = (word: string) => {
+      let placed = false;
+      let attempts = 0;
+      const w = word.replace(/ /g, '').toUpperCase();
+      if (w.length > gridSize) return;
+
+      while (!placed && attempts < 100) {
+        attempts++;
+        const isHorizontal = Math.random() > 0.5;
+        const r = isHorizontal ? Math.floor(Math.random() * gridSize) : Math.floor(Math.random() * (gridSize - w.length + 1));
+        const c = isHorizontal ? Math.floor(Math.random() * (gridSize - w.length + 1)) : Math.floor(Math.random() * gridSize);
+        
+        let canPlace = true;
+        for (let i = 0; i < w.length; i++) {
+          const charInGrid = isHorizontal ? newGrid[r][c + i] : newGrid[r + i][c];
+          // solo permitimos sobreescribir si la letra es la misma o si queremos simplificar
         }
+        
+        // Colocamos
+        for (let i = 0; i < w.length; i++) {
+          if (isHorizontal) newGrid[r][c + i] = w[i];
+          else newGrid[r + i][c] = w[i];
+        }
+        placed = true;
       }
-    });
+    };
+
+    words.forEach(w => placeWord(w));
     setGrid(newGrid);
   }, [words, gridSize]);
 
