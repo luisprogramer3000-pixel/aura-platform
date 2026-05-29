@@ -737,7 +737,49 @@ export default function Editor() {
       setLayoutFormat('horizontal');
       setSlides(fallback);
       setActiveSlideIndex(0);
+  };
+
+  const handleFillTemplateAI = async () => {
+    if (!aiForm.topic) return;
+    setIsAILoading(true);
+    try {
+      let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      if (apiUrl.endsWith('/')) apiUrl = apiUrl.slice(0, -1);
+      const res = await fetch(`${apiUrl}/api/v1/generate_exercises`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: aiForm.topic, subject: aiForm.subject || 'Spanish', cefr_level: 'A1' })
+      });
+      const data = await res.json();
+      
+      const newSlides = [...slides];
+      const activeSl = newSlides[activeSlideIndex];
+      
+      activeSl.elements = activeSl.elements.map((el, i) => {
+        let newEl = { ...el };
+        
+        if (newEl.type === 'title' && !newEl.content.toLowerCase().includes('tarea')) {
+          newEl.content = aiForm.topic;
+        }
+        if (newEl.type === 'vocabulary') {
+          newEl.spanish = data.vocabulary?.[i % (data.vocabulary?.length || 1)] || newEl.spanish;
+          newEl.english = data.vocabulary?.[i % (data.vocabulary?.length || 1)] || newEl.english;
+        }
+        if (newEl.type === 'quiz' && data.exercises?.length) {
+           const ex = data.exercises[i % data.exercises.length];
+           newEl.question = ex.question;
+           newEl.options = ex.options;
+           newEl.correctIndex = ex.options.indexOf(ex.correct_answer);
+           if (newEl.correctIndex === -1) newEl.correctIndex = 0;
+        }
+        return newEl as any;
+      });
+
+      setSlides(newSlides);
       setShowAIPanel(false);
+    } catch (e) {
+      console.error("AI Fill Error", e);
+      alert("Hubo un error al rellenar la plantilla. Verifica tu conexión a la IA.");
     } finally {
       setIsAILoading(false);
     }
@@ -1471,12 +1513,20 @@ export default function Editor() {
                 </button>
                 <div className="flex gap-2">
                   <button 
+                    onClick={handleFillTemplateAI}
+                    disabled={!aiForm.topic}
+                    className="px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold shadow-sm flex items-center gap-2 transition-all transform hover:scale-105"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Llenar Plantilla
+                  </button>
+                  <button 
                     onClick={handleGenerateWorksheet}
                     disabled={!aiForm.topic}
                     className="px-4 py-2 bg-pink-100 text-pink-700 hover:bg-pink-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold shadow-sm flex items-center gap-2 transition-all transform hover:scale-105"
                   >
                     <FileText className="w-4 h-4" />
-                    Generar Tarea A4
+                    Nueva Tarea A4
                   </button>
                   <button 
                     onClick={handleGenerateAI}
@@ -1484,7 +1534,7 @@ export default function Editor() {
                     className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-bold shadow-md flex items-center gap-2 transition-all transform hover:scale-105"
                   >
                     <Sparkles className="w-4 h-4" />
-                    Generar Clase
+                    Nueva Clase
                   </button>
                 </div>
               </div>
