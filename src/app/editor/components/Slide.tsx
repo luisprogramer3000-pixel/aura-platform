@@ -1,6 +1,6 @@
 "use client";
 import { useSlideStore } from '../hooks/useSlideStore';
-import { motion } from 'framer-motion';
+
 import VocabularyCard from './blocks/VocabularyCard';
 import GrammarBlock from './blocks/GrammarBlock';
 import QuizBlock from './blocks/QuizBlock';
@@ -19,7 +19,7 @@ interface SlideProps {
     blocks: {
       id: string;
       type: string;
-      props: Record<string, any>;
+      props: Record<string, unknown>;
     }[];
   };
 }
@@ -28,7 +28,7 @@ export default function Slide({ slide }: SlideProps) {
   const selectBlock = useSlideStore(state => state.selectBlock);
   const selectedBlockId = useSlideStore(state => state.selectedBlockId);
 
-  const renderBlock = (block: any) => {
+  const renderBlock = (block: { id: string; type: string; props: Record<string, unknown> }) => {
     const isSelected = block.id === selectedBlockId;
     const commonProps = {
       key: block.id,
