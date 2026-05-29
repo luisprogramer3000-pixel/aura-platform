@@ -95,6 +95,7 @@ export interface ReadingElement extends BaseElement {
   question: string;
   options: string[];
   correctIndex: number;
+  image?: string;
 }
 
 export interface AudioElement extends BaseElement {

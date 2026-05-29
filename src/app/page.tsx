@@ -737,6 +737,10 @@ export default function Editor() {
       setLayoutFormat('horizontal');
       setSlides(fallback);
       setActiveSlideIndex(0);
+      setShowAIPanel(false);
+    } finally {
+      setIsAILoading(false);
+    }
   };
 
   const handleFillTemplateAI = async () => {
