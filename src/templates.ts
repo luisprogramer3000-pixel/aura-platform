@@ -14,7 +14,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-1',
     type: 'cover',
-    background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)',
+    background: '#fcfbf9',
     transition: 'fade',
     elements: [
       {
@@ -23,15 +23,15 @@ export const INITIAL_SLIDES: Slide[] = [
         left: 80,
         top: 140,
         width: 864,
-        height: 100,
+        height: 120,
         zIndex: 2,
-        content: '¡Bienvenidos a la Clase de Español!',
-        fontSize: 46,
-        color: '#ffffff',
+        content: 'La Clase de Español',
+        fontSize: 64,
+        color: '#1e3a8a',
         align: 'center',
         bold: true,
         italic: false,
-        animation: 'bounce',
+        animation: 'fade',
         borderRadius: 0,
         borderWidth: 0,
         borderColor: ''
@@ -44,9 +44,9 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 824,
         height: 120,
         zIndex: 2,
-        content: 'Nivel A1-A2 • Clase Interactiva sobre Vocabulario y Expresiones del Día a Día\n\nCreado con AuraSpanish AI Builder ✨',
-        fontSize: 22,
-        color: '#e0e7ff',
+        content: 'Nivel A1-A2 • Vocabulario y Expresiones\n\nAuraSpanish AI Builder',
+        fontSize: 24,
+        color: '#334155',
         align: 'center',
         bold: false,
         italic: false,
@@ -54,7 +54,8 @@ export const INITIAL_SLIDES: Slide[] = [
         borderRadius: 0,
         borderWidth: 0,
         borderColor: ''
-      }
+      },
+      { id: 'el-1-line', type: 'graphic', left: 412, top: 250, width: 200, height: 4, zIndex: 1, shapeType: 'line', backgroundColor: '#1e3a8a', borderColor: '#1e3a8a' }
     ]
   },
   
@@ -62,7 +63,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-2',
     type: 'vocab',
-    background: 'linear-gradient(135deg, #1e1b4b 0%, #311042 100%)',
+    background: '#fcfbf9',
     transition: 'slide',
     elements: [
       {
@@ -74,12 +75,12 @@ export const INITIAL_SLIDES: Slide[] = [
         height: 70,
         zIndex: 2,
         content: 'Vocabulario Activo: La Cocina',
-        fontSize: 34,
-        color: '#f472b6',
+        fontSize: 36,
+        color: '#1e3a8a',
         align: 'center',
         bold: true,
         italic: false,
-        animation: 'scale'
+        animation: 'fade'
       },
       {
         id: 'el-2-img',
@@ -92,9 +93,9 @@ export const INITIAL_SLIDES: Slide[] = [
         src: 'assets/woman_cooking.png',
         alt: 'Mujer cocinando en la cocina',
         contain: false,
-        borderRadius: 16,
+        borderRadius: 0,
         borderWidth: 2,
-        borderColor: 'rgba(244,114,182,0.3)'
+        borderColor: '#1e3a8a'
       },
       {
         id: 'el-2-card',
@@ -108,10 +109,10 @@ export const INITIAL_SLIDES: Slide[] = [
         english: 'To cook',
         pronunciation: '/ko-si-’nar/',
         example: 'Yo cocino la cena en mi casa todos los días.',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderRadius: 16,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: '#cbd5e1',
         padding: 24
       }
     ]
@@ -121,7 +122,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-3',
     type: 'grammar',
-    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+    background: '#fcfbf9',
     transition: 'fade',
     elements: [
       {
@@ -132,9 +133,9 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 70,
         zIndex: 2,
-        content: 'Gramática: El verbo de gustos y preferencias',
-        fontSize: 32,
-        color: '#60a5fa',
+        content: 'Gramática Clave',
+        fontSize: 36,
+        color: '#1e3a8a',
         align: 'left',
         bold: true,
         italic: false
@@ -151,10 +152,10 @@ export const INITIAL_SLIDES: Slide[] = [
         explanation: 'En español, el verbo gustar funciona de manera diferente al inglés. No conjugamos el verbo según la persona que siente, sino según las cosas que gustan.',
         formula: 'Pronombre (Me/Te/Le/Nos/Os/Les) + GUSTA (Singular) / GUSTAN (Plural)',
         example: 'Me gusta el chocolate 🍫\nNos gustan las montañas 🏔️',
-        backgroundColor: 'rgba(15, 23, 42, 0.65)',
-        borderRadius: 20,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 2,
-        borderColor: '#3b82f6',
+        borderColor: '#1e3a8a',
         padding: 24
       }
     ]
@@ -164,7 +165,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-4',
     type: 'quiz',
-    background: 'linear-gradient(135deg, #090d16 0%, #111827 100%)',
+    background: '#fcfbf9',
     transition: 'scale',
     elements: [
       {
@@ -175,10 +176,10 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 70,
         zIndex: 2,
-        content: 'Cuestionario Rápido de Comprensión',
-        fontSize: 30,
-        color: '#34d399',
-        align: 'center',
+        content: 'Cuestionario de Comprensión',
+        fontSize: 36,
+        color: '#1e3a8a',
+        align: 'left',
         bold: true,
         italic: false
       },
@@ -197,10 +198,10 @@ export const INITIAL_SLIDES: Slide[] = [
           'nos gusto'
         ],
         correctIndex: 1,
-        backgroundColor: 'rgba(255,255,255,0.03)',
-        borderRadius: 20,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 1,
-        borderColor: 'rgba(52,211,153,0.2)',
+        borderColor: '#cbd5e1',
         padding: 20
       }
     ]
@@ -210,7 +211,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-5',
     type: 'dialogue',
-    background: 'linear-gradient(135deg, #111827 0%, #030712 100%)',
+    background: '#fcfbf9',
     transition: 'slide',
     elements: [
       {
@@ -221,9 +222,9 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 60,
         zIndex: 2,
-        content: 'Práctica Auditiva: Planificando una fiesta',
-        fontSize: 28,
-        color: '#a78bfa',
+        content: 'Práctica: Planificando una fiesta',
+        fontSize: 36,
+        color: '#1e3a8a',
         align: 'left',
         bold: true,
         italic: false
@@ -236,18 +237,18 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 380,
         zIndex: 3,
-        characterA: 'Carlos (David)',
-        characterB: 'María (Helena)',
+        characterA: 'Carlos',
+        characterB: 'María',
         lines: [
           { speaker: 'A', text: 'Hola, María. ¿Estás lista para la fiesta de mañana?' },
           { speaker: 'B', text: '¡Hola! Sí, pero me falta comprar comida. ¿Tenemos manzanas en casa?' },
           { speaker: 'A', text: 'No, no tenemos. Necesitamos comprar manzanas, plátanos y un pastel.' },
           { speaker: 'B', text: 'Perfecto. Voy a ir al supermercado ahora mismo. ¡Nos vemos luego!' }
         ],
-        backgroundColor: 'rgba(15,23,42,0.8)',
-        borderRadius: 20,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 1,
-        borderColor: 'rgba(167,139,250,0.2)'
+        borderColor: '#cbd5e1'
       }
     ]
   },
@@ -256,7 +257,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-6',
     type: 'speaking',
-    background: 'linear-gradient(135deg, #0c0a09 0%, #1c1917 100%)',
+    background: '#fcfbf9',
     transition: 'zoom',
     elements: [
       {
@@ -267,10 +268,10 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 70,
         zIndex: 2,
-        content: 'Actividad de Habla (Speaking)',
-        fontSize: 32,
-        color: '#fb7185',
-        align: 'center',
+        content: 'Actividad de Habla',
+        fontSize: 36,
+        color: '#1e3a8a',
+        align: 'left',
         bold: true,
         italic: false
       },
@@ -285,10 +286,10 @@ export const INITIAL_SLIDES: Slide[] = [
         phrase: 'El fin de semana pasado, Carlos fue a las montañas con sus amigos.',
         translation: 'Last weekend, Carlos went to the mountains with his friends.',
         hint: 'Enfatiza la correcta pronunciación de "fin de semana" y vocaliza la "ñ" en "montañas".',
-        backgroundColor: 'rgba(255,255,255,0.03)',
-        borderRadius: 24,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 2,
-        borderColor: '#f43f5e',
+        borderColor: '#1e3a8a',
         padding: 24
       }
     ]
@@ -298,7 +299,7 @@ export const INITIAL_SLIDES: Slide[] = [
   {
     id: 'slide-initial-7',
     type: 'dragdrop',
-    background: 'linear-gradient(135deg, #022c22 0%, #064e3b 100%)',
+    background: '#fcfbf9',
     transition: 'fade',
     elements: [
       {
@@ -309,9 +310,9 @@ export const INITIAL_SLIDES: Slide[] = [
         width: 864,
         height: 70,
         zIndex: 2,
-        content: 'Mini-Juego: Relaciona los opuestos',
-        fontSize: 30,
-        color: '#34d399',
+        content: 'Une las columnas',
+        fontSize: 36,
+        color: '#1e3a8a',
         align: 'center',
         bold: true,
         italic: false
@@ -330,10 +331,10 @@ export const INITIAL_SLIDES: Slide[] = [
           { id: 'p2', left: 'Día (Day)', right: 'Noche (Night)' },
           { id: 'p3', left: 'Grande (Big)', right: 'Pequeño (Small)' }
         ],
-        backgroundColor: 'rgba(255,255,255,0.04)',
-        borderRadius: 20,
+        backgroundColor: '#ffffff',
+        borderRadius: 0,
         borderWidth: 1,
-        borderColor: 'rgba(52,211,153,0.3)',
+        borderColor: '#cbd5e1',
         padding: 20
       }
     ]
