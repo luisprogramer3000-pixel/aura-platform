@@ -1,17 +1,17 @@
 "use client";
 import { useSlideStore } from '../hooks/useSlideStore';
 import { motion } from 'framer-motion';
-import VocabularyCard from './blocks/VocabularyCard.tsx';
-import GrammarBlock from './blocks/GrammarBlock.tsx';
-import QuizBlock from './blocks/QuizBlock.tsx';
-import ReadingBlock from './blocks/ReadingBlock.tsx';
-import AudioBlock from './blocks/AudioBlock.tsx';
-import ImageBlock from './blocks/ImageBlock.tsx';
-import DialogueBlock from './blocks/DialogueBlock.tsx';
-import SpeakingBlock from './blocks/SpeakingBlock.tsx';
-import DragDropActivityBlock from './blocks/DragDropActivityBlock.tsx';
-import TitleBlock from './blocks/TitleBlock.tsx';
-import TextBlock from './blocks/TextBlock.tsx';
+import VocabularyCard from './blocks/VocabularyCard';
+import GrammarBlock from './blocks/GrammarBlock';
+import QuizBlock from './blocks/QuizBlock';
+import ReadingBlock from './blocks/ReadingBlock';
+import AudioBlock from './blocks/AudioBlock';
+import ImageBlock from './blocks/ImageBlock';
+import DialogueBlock from './blocks/DialogueBlock';
+import SpeakingBlock from './blocks/SpeakingBlock';
+import DragDropActivityBlock from './blocks/DragDropActivityBlock';
+import TitleBlock from './blocks/TitleBlock';
+import TextBlock from './blocks/TextBlock';
 
 interface SlideProps {
   slide: {
