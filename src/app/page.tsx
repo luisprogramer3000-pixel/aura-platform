@@ -45,25 +45,26 @@ const InteractiveScatterCards = ({ cards }: { cards: any[] }) => {
             }}
           >
             <div style={{
-              width: '100%', height: '100%', position: 'relative', transition: 'transform 0.6s',
+              width: '100%', height: '100%', position: 'relative', transition: 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)',
               transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : `rotate(${rotation})`
             }}>
               {/* Front */}
               <div style={{
                 position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden',
-                backgroundColor: '#fff', border: '3px solid #fca5a5', borderRadius: '8px', padding: '15px', 
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '10px'
+                backgroundColor: '#fcfbf9', border: '1px solid #e6e2dd', borderRadius: '4px', padding: '20px', 
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '15px'
               }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #ef4444', color: '#ef4444', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{card.id}</div>
-                <div style={{ fontSize: '14px', color: '#333', marginTop: 'auto', marginBottom: 'auto', fontWeight: 'bold' }}>{card.body}</div>
+                <div style={{ width: '100%', height: '6px', backgroundColor: '#1e3a8a', position: 'absolute', top: 0, left: 0, borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }}></div>
+                <div style={{ fontSize: '24px', fontFamily: 'serif', color: '#1e3a8a', fontWeight: 'bold', marginTop: '20px' }}>{card.id}</div>
+                <div style={{ fontSize: '18px', fontFamily: 'serif', color: '#334155', marginTop: 'auto', marginBottom: 'auto', fontWeight: 'bold', fontStyle: 'italic' }}>{card.body}</div>
               </div>
               {/* Back */}
               <div style={{
                 position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-                backgroundColor: '#fca5a5', border: '3px solid #ef4444', borderRadius: '8px', padding: '15px', 
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center'
+                backgroundColor: '#1e3a8a', border: '1px solid #1e3a8a', borderRadius: '4px', padding: '20px', 
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center'
               }}>
-                <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>{card.question}</div>
+                <div style={{ color: '#fcfbf9', fontSize: '20px', fontWeight: 'bold', fontFamily: 'serif' }}>{card.question}</div>
               </div>
             </div>
           </div>
@@ -74,40 +75,41 @@ const InteractiveScatterCards = ({ cards }: { cards: any[] }) => {
 };
 
 const InteractiveQuiz = ({ question, options, correctAnswer }: { question: string, options: string[], correctAnswer: string }) => {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[600px] pointer-events-auto">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 font-serif">{question}</h3>
-      <div className="flex flex-col gap-3">
-        {options.map((opt: string, i: number) => {
-          const isSelected = selected === opt;
-          const isCorrect = opt === correctAnswer;
-          let bgColor = 'bg-white hover:bg-gray-50';
-          let borderColor = 'border-gray-200';
-          if (selected) {
-            if (isCorrect) {
-              bgColor = 'bg-green-50'; borderColor = 'border-green-500';
+    <div className="bg-[#fcfbf9] rounded-none shadow-[0_5px_15px_rgba(0,0,0,0.05)] border-[2px] border-indigo-900 p-10 w-[700px] pointer-events-auto relative">
+      <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+      <h3 className="text-3xl font-bold text-indigo-900 mb-8 font-serif leading-snug">{question}</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {options.map((opt: any, i: number) => {
+          const isSelected = selectedIdx === i;
+          let bgColor = 'bg-white hover:bg-slate-50';
+          let borderColor = 'border-slate-300';
+          if (selectedIdx !== null) {
+            if (opt === correctAnswer) {
+              bgColor = 'bg-green-50'; borderColor = 'border-green-600';
             } else if (isSelected) {
-              bgColor = 'bg-red-50'; borderColor = 'border-red-500';
+              bgColor = 'bg-red-50'; borderColor = 'border-red-600';
             }
           }
           return (
             <div 
               key={i} 
-              onClick={(e) => { e.stopPropagation(); if (!selected) setSelected(opt); }}
-              className={`p-4 rounded-lg border-2 ${bgColor} ${borderColor} cursor-pointer flex items-center gap-3 transition-colors`}
+              onClick={(e) => { e.stopPropagation(); if (selectedIdx === null) setSelectedIdx(i); }}
+              className={`p-6 rounded-none border-[1.5px] ${bgColor} ${borderColor} cursor-pointer flex flex-col items-center justify-center text-center gap-3 transition-all duration-300 shadow-sm`}
             >
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selected && isCorrect ? 'border-green-500 bg-green-500' : selected && isSelected ? 'border-red-500 bg-red-500' : 'border-gray-300'}`}>
-                {selected && isCorrect && <CheckCircle2 className="w-4 h-4 text-white" />}
+              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-sm ${selectedIdx !== null && opt === correctAnswer ? 'border-green-600 bg-green-600 text-white' : isSelected ? 'border-red-600 bg-red-600 text-white' : 'border-indigo-200 text-indigo-800 bg-indigo-50'}`}>
+                {String.fromCharCode(65+i)}
               </div>
-              <span className={`text-lg ${selected && isCorrect ? 'text-green-700 font-bold' : selected && isSelected ? 'text-red-700' : 'text-gray-700'}`}>{opt}</span>
+              <span className={`text-xl font-serif ${selectedIdx !== null && opt === correctAnswer ? 'text-green-800 font-bold' : isSelected ? 'text-red-800' : 'text-slate-700'}`}>{opt}</span>
             </div>
           );
         })}
       </div>
-      {selected && (
-        <div className={`mt-6 p-4 rounded-lg ${selected === correctAnswer ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} font-bold text-center`}>
-          {selected === correctAnswer ? '¡Correcto! ¡Muy bien hecho!' : 'Incorrecto. La respuesta correcta era: ' + correctAnswer}
+      {selectedIdx !== null && (
+        <div className={`mt-8 p-5 rounded-none border-l-4 ${options[selectedIdx] === correctAnswer ? 'bg-green-50 border-green-600 text-green-900' : 'bg-red-50 border-red-600 text-red-900'} font-serif text-lg flex items-center gap-3 shadow-sm`}>
+           <strong className="tracking-widest uppercase text-sm font-sans">{options[selectedIdx] === correctAnswer ? 'Correct' : 'Incorrect'}</strong>
+           <span className="italic">{options[selectedIdx] === correctAnswer ? '¡Excelente elección!' : 'Vuelve a revisar la teoría e inténtalo luego.'}</span>
         </div>
       )}
     </div>
@@ -128,23 +130,27 @@ const InteractiveMatch = ({ pairs }: { pairs: {left: string, right: string}[] })
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[700px] flex gap-8 pointer-events-auto">
-      <div className="flex-1 flex flex-col gap-4">
+    <div className="bg-[#fcfbf9] rounded-none shadow-md border-[2px] border-indigo-900 p-10 w-[800px] flex gap-8 pointer-events-auto relative">
+      <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+      <div className="flex-1 flex flex-col gap-5">
         {pairs.map((p, i) => (
           <div 
             key={i} 
             onClick={(e) => handleLeftClick(e, p.left)}
-            className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${matches[p.left] ? 'bg-indigo-50 border-indigo-200 text-indigo-700 opacity-50' : selectedLeft === p.left ? 'border-indigo-500 bg-indigo-50 shadow-md ring-2 ring-indigo-200' : 'border-gray-200 hover:border-indigo-300'}`}
+            className={`p-5 bg-white border-[1.5px] cursor-pointer transition-all duration-300 font-serif text-xl shadow-sm flex items-center justify-between ${matches[p.left] ? 'border-slate-200 text-slate-400 bg-slate-50 opacity-60' : selectedLeft === p.left ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600 text-indigo-900 font-bold' : 'border-slate-300 text-slate-700 hover:border-indigo-400 hover:shadow-md'}`}
           >
-            {p.left}
+            <span>{p.left}</span>
+            {selectedLeft === p.left && <div className="w-3 h-3 rounded-full bg-indigo-600"></div>}
           </div>
         ))}
       </div>
-      <div className="w-12 flex flex-col items-center justify-center gap-2">
-        <ArrowRight className="text-gray-300 w-8 h-8" />
-        <span className="text-xs text-gray-400 font-bold">Unir</span>
+      <div className="w-16 flex flex-col items-center justify-center gap-3">
+        <div className="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center bg-white shadow-sm">
+           <ArrowRight className="text-slate-400 w-5 h-5" />
+        </div>
+        <span className="text-xs text-indigo-900 font-bold uppercase tracking-widest font-sans rotate-90 mt-8">Match</span>
       </div>
-      <div className="flex-1 flex flex-col gap-4">
+      <div className="flex-1 flex flex-col gap-5">
         {pairs.map((p, i) => {
           const isMatched = Object.values(matches).includes(p.right);
           const matchedBy = Object.keys(matches).find(k => matches[k] === p.right);
@@ -152,10 +158,10 @@ const InteractiveMatch = ({ pairs }: { pairs: {left: string, right: string}[] })
             <div 
               key={i} 
               onClick={(e) => handleRightClick(e, p.right)}
-              className={`p-4 rounded-lg border-2 cursor-pointer transition-colors ${isMatched ? (p.left === matchedBy ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700') : selectedLeft ? 'border-indigo-300 bg-indigo-50 hover:bg-indigo-100 ring-2 ring-indigo-200' : 'border-gray-200'}`}
+              className={`p-5 bg-white border-[1.5px] cursor-pointer transition-all duration-300 font-serif text-xl shadow-sm relative ${isMatched ? (p.left === matchedBy ? 'bg-green-50 border-green-500 text-green-900 font-bold' : 'bg-red-50 border-red-500 text-red-900 font-bold') : selectedLeft ? 'border-indigo-400 bg-indigo-50/50 hover:bg-indigo-50 ring-1 ring-indigo-200 text-indigo-900' : 'border-slate-300 text-slate-700'}`}
             >
               {p.right}
-              {isMatched && <div className="text-xs mt-1 font-bold opacity-70">Unido con: {matchedBy}</div>}
+              {isMatched && <div className="absolute top-0 right-0 bg-white px-2 py-1 text-[10px] font-sans font-bold uppercase border-b border-l border-slate-200 text-slate-500">Unido con: {matchedBy}</div>}
             </div>
           )
         })}
@@ -197,8 +203,9 @@ const InteractiveWordSearch = ({ words, gridSize = 10 }: { words: string[], grid
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border-2 border-indigo-200 p-8 flex gap-8 pointer-events-auto">
-      <div className="flex flex-col gap-1">
+    <div className="bg-[#fcfbf9] rounded-none shadow-[0_5px_15px_rgba(0,0,0,0.05)] border-[2px] border-indigo-900 p-10 flex gap-12 pointer-events-auto relative">
+      <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+      <div className="flex flex-col gap-1 border border-slate-300 p-2 bg-white shadow-sm">
         {grid.map((row, r) => (
           <div key={r} className="flex gap-1">
             {row.map((letter, c) => {
@@ -207,7 +214,7 @@ const InteractiveWordSearch = ({ words, gridSize = 10 }: { words: string[], grid
                 <div 
                   key={c} 
                   onClick={(e) => toggleCell(r, c, e)}
-                  className={`w-10 h-10 flex items-center justify-center font-bold text-lg rounded cursor-pointer transition-colors select-none ${isSelected ? 'bg-indigo-500 text-white shadow-inner' : 'bg-gray-50 hover:bg-indigo-100 text-gray-700'}`}
+                  className={`w-10 h-10 flex items-center justify-center font-bold text-lg font-sans rounded-none cursor-pointer transition-colors select-none border border-slate-100 ${isSelected ? 'bg-indigo-900 text-white shadow-inner' : 'bg-slate-50 hover:bg-indigo-100 text-slate-800'}`}
                 >
                   {letter}
                 </div>
@@ -216,11 +223,11 @@ const InteractiveWordSearch = ({ words, gridSize = 10 }: { words: string[], grid
           </div>
         ))}
       </div>
-      <div className="flex flex-col gap-4 min-w-[200px]">
-        <h3 className="font-bold text-xl text-indigo-900 border-b-2 border-indigo-100 pb-2">Palabras a buscar:</h3>
-        <ul className="flex flex-col gap-2">
+      <div className="flex flex-col gap-5 min-w-[220px]">
+        <h3 className="font-bold text-sm tracking-widest uppercase font-sans text-indigo-900 border-b-2 border-indigo-900 pb-2">Word Bank</h3>
+        <ul className="flex flex-col gap-3">
           {words.map((w, i) => (
-            <li key={i} className={`font-medium text-lg px-3 py-2 rounded-lg ${foundWords.includes(w) ? 'line-through text-gray-400 bg-gray-100' : 'text-indigo-700 bg-indigo-50'}`}>
+            <li key={i} className={`font-serif text-xl border-b border-slate-200 pb-2 transition-all ${foundWords.includes(w) ? 'line-through text-slate-400 italic' : 'text-slate-800 hover:text-indigo-600 cursor-pointer'}`}>
               {w}
             </li>
           ))}
@@ -235,25 +242,29 @@ const InteractiveFillBlanks = ({ textWithBlanks, answers }: { textWithBlanks: st
   const [inputs, setInputs] = useState<string[]>(Array(parts.length - 1).fill(''));
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 pointer-events-auto text-xl leading-loose text-gray-800">
-      {parts.map((part, i) => (
-        <React.Fragment key={i}>
-          <span>{part}</span>
-          {i < parts.length - 1 && (
-            <input 
-              type="text" 
-              value={inputs[i]}
-              onChange={(e) => {
-                const newInputs = [...inputs];
-                newInputs[i] = e.target.value;
-                setInputs(newInputs);
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className={`mx-2 border-b-2 outline-none text-center bg-gray-50 rounded-t px-2 focus:bg-indigo-50 transition-colors w-32 ${inputs[i].toLowerCase().trim() === answers[i]?.toLowerCase().trim() ? 'border-green-500 text-green-700 font-bold' : 'border-indigo-400 text-indigo-900'}`}
-            />
-          )}
-        </React.Fragment>
-      ))}
+    <div className="bg-[#fcfbf9] rounded-none shadow-sm border border-slate-300 p-12 pointer-events-auto text-2xl leading-loose font-serif text-slate-800 relative w-[800px] max-w-full">
+      <div className="absolute top-0 left-0 w-2 h-full bg-indigo-900"></div>
+      <h3 className="text-sm font-bold text-indigo-900 mb-6 font-sans uppercase tracking-widest">Fill in the blanks</h3>
+      <div className="bg-white p-8 border border-slate-200 shadow-[inset_0_0_10px_rgba(0,0,0,0.02)]">
+        {parts.map((part, i) => (
+          <React.Fragment key={i}>
+            <span>{part}</span>
+            {i < parts.length - 1 && (
+              <input 
+                type="text" 
+                value={inputs[i]}
+                onChange={(e) => {
+                  const newInputs = [...inputs];
+                  newInputs[i] = e.target.value;
+                  setInputs(newInputs);
+                }}
+                onClick={(e) => e.stopPropagation()}
+                className={`mx-2 border-b-2 bg-slate-50 focus:bg-white px-2 py-1 outline-none text-center font-serif text-indigo-900 transition-colors w-32 ${inputs[i].toLowerCase() === answers[i]?.toLowerCase() ? 'border-green-500 text-green-700' : 'border-slate-400 focus:border-indigo-600'}`}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 };
@@ -262,26 +273,30 @@ const InteractiveTrueFalse = ({ statement, isTrue, explanation }: { statement: s
   const [selected, setSelected] = useState<boolean | null>(null);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 flex flex-col gap-6 pointer-events-auto w-[600px] text-center">
-      <h3 className="text-2xl font-bold text-gray-800">{statement}</h3>
-      <div className="flex justify-center gap-8">
+    <div className="bg-[#fcfbf9] rounded-none shadow-[0_5px_15px_rgba(0,0,0,0.05)] border-[2px] border-indigo-900 p-10 w-[600px] pointer-events-auto relative">
+      <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+      <h3 className="text-3xl font-bold text-indigo-900 mb-8 font-serif leading-snug">¿Verdadero o Falso?</h3>
+      <div className="bg-white p-6 border-l-4 border-slate-300 text-2xl font-serif text-slate-800 mb-8 italic shadow-sm">
+        "{statement}"
+      </div>
+      <div className="flex gap-6">
         <button 
           onClick={(e) => { e.stopPropagation(); setSelected(true); }}
-          className={`px-8 py-4 rounded-lg font-bold text-xl transition-colors ${selected === true ? (isTrue ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+          className={`flex-1 py-4 text-xl font-bold font-sans uppercase tracking-widest border-[1.5px] transition-all duration-300 shadow-sm ${selected === true ? (isTrue ? 'bg-green-600 border-green-700 text-white' : 'bg-red-600 border-red-700 text-white') : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'}`}
         >
-          Verdadero
+          True
         </button>
         <button 
           onClick={(e) => { e.stopPropagation(); setSelected(false); }}
-          className={`px-8 py-4 rounded-lg font-bold text-xl transition-colors ${selected === false ? (!isTrue ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+          className={`flex-1 py-4 text-xl font-bold font-sans uppercase tracking-widest border-[1.5px] transition-all duration-300 shadow-sm ${selected === false ? (!isTrue ? 'bg-green-600 border-green-700 text-white' : 'bg-red-600 border-red-700 text-white') : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'}`}
         >
-          Falso
+          False
         </button>
       </div>
       {selected !== null && (
-        <div className={`p-4 rounded-lg ${selected === isTrue ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
-          <p className="font-bold">{selected === isTrue ? '¡Correcto!' : 'Incorrecto.'}</p>
-          <p className="mt-2 text-sm">{explanation}</p>
+        <div className={`mt-8 p-5 rounded-none border-l-4 ${selected === isTrue ? 'bg-green-50 border-green-600 text-green-900' : 'bg-red-50 border-red-600 text-red-900'} font-serif text-lg shadow-sm`}>
+          <strong className="tracking-widest uppercase text-sm font-sans block mb-2">{selected === isTrue ? 'Correct' : 'Incorrect'}</strong>
+          <span className="italic">{explanation}</span>
         </div>
       )}
     </div>
@@ -292,20 +307,27 @@ const InteractiveMultipleChoice = ({ question, options }: { question: string, op
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 flex flex-col gap-6 pointer-events-auto w-[700px]">
-      <h3 className="text-2xl font-bold text-indigo-900 mb-4">{question}</h3>
+    <div className="bg-[#fcfbf9] rounded-none shadow-[0_5px_15px_rgba(0,0,0,0.05)] border-[2px] border-indigo-900 p-10 flex flex-col gap-8 pointer-events-auto w-[700px] relative">
+      <div className="absolute top-0 left-0 w-full h-2 bg-indigo-900"></div>
+      <h3 className="text-3xl font-bold text-indigo-900 mb-2 font-serif leading-snug">{question}</h3>
       <div className="grid grid-cols-2 gap-4">
         {options.map((opt, i) => (
           <div 
             key={i} 
             onClick={(e) => { e.stopPropagation(); setSelectedIdx(i); }}
-            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 ${selectedIdx === i ? (opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50'}`}
+            className={`p-5 rounded-none border-[1.5px] cursor-pointer transition-all duration-300 flex items-center gap-4 shadow-sm ${selectedIdx === i ? (opt.isCorrect ? 'border-green-600 bg-green-50 text-green-900' : 'border-red-600 bg-red-50 text-red-900') : 'bg-white border-slate-300 hover:border-indigo-400 hover:bg-slate-50'}`}
           >
-            {opt.image && <img src={opt.image} alt="option" className="w-16 h-16 object-cover rounded-lg" />}
-            <span className={`text-lg font-medium ${selectedIdx === i ? (opt.isCorrect ? 'text-green-800' : 'text-red-800') : 'text-gray-700'}`}>{opt.text}</span>
+            {opt.image && <img src={opt.image} alt="option" className="w-16 h-16 object-cover rounded-none border border-slate-200" />}
+            <span className={`text-xl font-serif ${selectedIdx === i ? (opt.isCorrect ? 'text-green-800 font-bold' : 'text-red-800') : 'text-slate-700'}`}>{opt.text}</span>
           </div>
         ))}
       </div>
+      {selectedIdx !== null && (
+        <div className={`mt-2 p-5 rounded-none border-l-4 ${options[selectedIdx].isCorrect ? 'bg-green-50 border-green-600 text-green-900' : 'bg-red-50 border-red-600 text-red-900'} font-serif text-lg shadow-sm`}>
+          <strong className="tracking-widest uppercase text-sm font-sans block mb-2">{options[selectedIdx].isCorrect ? 'Correct' : 'Incorrect'}</strong>
+          <span className="italic">{options[selectedIdx].isCorrect ? '¡Excelente! Respuesta correcta.' : 'Esa no es la opción correcta.'}</span>
+        </div>
+      )}
     </div>
   );
 };
